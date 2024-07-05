@@ -1,0 +1,9 @@
+@import './_tailwindcss.css';
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    @apply font-quicksand;
+}
