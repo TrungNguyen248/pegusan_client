@@ -2,6 +2,8 @@
 import { useAuthStore } from '../stores/auth'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import GroupUserIcon from '../components/Icons/group_user.vue'
+import TickIcon from '../components/Icons/tick.vue'
 
 const courses = ref({})
 const error = ref(null)
@@ -43,7 +45,6 @@ async function fetchCourses() {
                 },
             },
         )
-        console.log(res.data.metadata)
         isLoading.value = false
         courses.value = res.data.metadata
     } catch (err) {
@@ -57,14 +58,60 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div v-if="isLoading" class="text-center text-3xl font-bold">
-        Loading.........
+    <div v-if="isLoading" class="container mx-auto max-w-7xl mt-[72px]">
+        <div class="p-4 flex flex-wrap justify-center sm:justify-normal">
+            <div
+                class="relative p-4 xl:w-1/3 sm:w-full md:w-1/2 flex flex-col w-56 h-64 animate-pulse rounded-xl gap-4"
+            >
+                <div
+                    class="bg-neutral-400/50 w-full h-[238px] animate-pulse rounded-md"
+                ></div>
+                <div class="flex flex-col gap-2">
+                    <div
+                        class="bg-neutral-400/50 w-full h-[16px] animate-pulse rounded-md"
+                    ></div>
+                    <div
+                        class="bg-neutral-400/50 w-4/5 h-[16px] animate-pulse rounded-md"
+                    ></div>
+                    <div
+                        class="bg-neutral-400/50 w-full h-[16px] animate-pulse rounded-md"
+                    ></div>
+                    <div
+                        class="bg-neutral-400/50 w-2/4 h-[16px] animate-pulse rounded-md"
+                    ></div>
+                </div>
+            </div>
+
+            <div
+                class="relative xl:w-1/3 sm:w-full md:w-1/2 flex flex-col w-56 h-64 animate-pulse rounded-xl p-4 gap-4"
+            >
+                <div
+                    class="bg-neutral-400/50 w-full h-[238px] animate-pulse rounded-md"
+                ></div>
+                <div class="flex flex-col gap-2">
+                    <div
+                        class="bg-neutral-400/50 w-full h-[16px] animate-pulse rounded-md"
+                    ></div>
+                    <div
+                        class="bg-neutral-400/50 w-4/5 h-[16px] animate-pulse rounded-md"
+                    ></div>
+                    <div
+                        class="bg-neutral-400/50 w-full h-[16px] animate-pulse rounded-md"
+                    ></div>
+                    <div
+                        class="bg-neutral-400/50 w-2/4 h-[16px] animate-pulse rounded-md"
+                    ></div>
+                </div>
+            </div>
+        </div>
     </div>
     <div v-else>
-        <div class="container mx-auto max-w-7xl mt-20">
-            <div class="grid md:grid-cols-3 gap-14 grid-cols-1">Khóa học</div>
+        <div class="container mx-auto max-w-7xl mt-[72px]">
+            <div class="py-5 px-2 sm:py-10 lg:px-5 lg:ml-5">
+                <p class="text-lg text-white font-bold">Danh sách khóa học</p>
+            </div>
         </div>
-        <div class="py-24">
+        <div class="">
             <div class="container mx-auto max-w-7xl">
                 <div class="flex flex-wrap justify-center sm:justify-normal">
                     <div
@@ -89,8 +136,10 @@ onMounted(async () => {
                                 />
                             </div>
                         </router-link>
-                        <div class="p-4 border-2 rounded-b-2xl">
-                            <div class="font-bold">
+                        <div
+                            class="p-4 border-2 rounded-b-2xl border-[#fff5e1] bg-[#153448]"
+                        >
+                            <div class="text-white font-bold">
                                 <router-link
                                     :to="{
                                         name: 'CourseDetail',
@@ -104,12 +153,28 @@ onMounted(async () => {
                                     <p class="text-xl">{{ course.name }}</p>
                                 </router-link>
                             </div>
-                            <div class="text-sm">
-                                <p class="select-none">
-                                    Số người đang học (icon nguoi subscribe):
-                                    {{ course.stu_num || 0 }}
+                            <div
+                                class="absolute py-4 top-0 right-[7%] flex justify-center items-center"
+                            >
+                                <div class="mr-2">
+                                    <span>
+                                        <GroupUserIcon class="w-7 h-[28px]" />
+                                    </span>
+                                </div>
+                                <p class="text-sm">{{ course.stu_num || 0 }}</p>
+                            </div>
+                            <div class="absolute p-5 top-0 left-0">
+                                <p
+                                    class="flex items-center text-sm px-2 py-1 rounded-full bg-white/30"
+                                    v-if="course.registered"
+                                >
+                                    <span class="mr-2">
+                                        <TickIcon class="w-6 h-[24px]" />
+                                    </span>
+                                    <span class="text-white font-medium"
+                                        >Đã đăng ký</span
+                                    >
                                 </p>
-                                <p v-if="course.registered">Đã đăng ký</p>
                             </div>
                         </div>
                     </div>
