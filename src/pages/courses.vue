@@ -60,62 +60,63 @@ onMounted(async () => {
     <div v-if="isLoading" class="text-center text-3xl font-bold">
         Loading.........
     </div>
-    <div class="hidden container mx-auto max-w-7xl mt-20">
-        <div class="grid md:grid-cols-3 gap-14 grid-cols-1"></div>
-    </div>
-
-    <section class="py-32">
-        <div class="container mx-auto max-w-7xl">
-            <div class="flex flex-wrap justify-center sm:justify-normal">
-                <div
-                    class="relative xl:w-1/3 sm:w-full md:w-1/2 p-4 flex flex-col rounded-2xl"
-                    v-for="course in courses"
-                    :key="course._id"
-                >
-                    <router-link
-                        :to="{
-                            name: 'CourseDetail',
-                            params: { id: course._id },
-                        }"
-                        @click="
-                            !course.registered && registerCourse(course._id)
-                        "
-                        class="relative text-gray-800 font-bold overflow-hidden object-cover rounded-t-2xl"
+    <div v-else>
+        <div class="container mx-auto max-w-7xl mt-20">
+            <div class="grid md:grid-cols-3 gap-14 grid-cols-1">Khóa học</div>
+        </div>
+        <div class="py-24">
+            <div class="container mx-auto max-w-7xl">
+                <div class="flex flex-wrap justify-center sm:justify-normal">
+                    <div
+                        class="relative xl:w-1/3 sm:w-full md:w-1/2 p-4 flex flex-col rounded-2xl"
+                        v-for="course in courses"
+                        :key="course._id"
                     >
-                        <div class=" ">
-                            <img
-                                class="w-full hover:scale-104 hover:transition-all transition-all"
-                                src="../assets/images/course_test.jpg"
-                            />
-                        </div>
-                    </router-link>
-                    <div class="p-4 border-2 rounded-b-2xl">
-                        <div class="font-bold">
-                            <router-link
-                                :to="{
-                                    name: 'CourseDetail',
-                                    params: { id: course._id },
-                                }"
-                                @click="
-                                    !course.registered &&
-                                        registerCourse(course._id)
-                                "
-                            >
-                                <p class="text-xl">{{ course.name }}</p>
-                            </router-link>
-                        </div>
-                        <div class="text-sm">
-                            <p class="select-none">
-                                Số người đang học (icon nguoi subscribe):
-                                {{ course.stu_num || 0 }}
-                            </p>
-                            <p v-if="course.registered">Đã đăng ký</p>
+                        <router-link
+                            :to="{
+                                name: 'CourseDetail',
+                                params: { id: course._id },
+                            }"
+                            @click="
+                                !course.registered && registerCourse(course._id)
+                            "
+                            class="relative text-gray-800 font-bold overflow-hidden object-cover rounded-t-2xl"
+                        >
+                            <div class=" ">
+                                <img
+                                    class="w-full hover:scale-104 hover:transition-all transition-all"
+                                    src="../assets/images/course_test.jpg"
+                                />
+                            </div>
+                        </router-link>
+                        <div class="p-4 border-2 rounded-b-2xl">
+                            <div class="font-bold">
+                                <router-link
+                                    :to="{
+                                        name: 'CourseDetail',
+                                        params: { id: course._id },
+                                    }"
+                                    @click="
+                                        !course.registered &&
+                                            registerCourse(course._id)
+                                    "
+                                >
+                                    <p class="text-xl">{{ course.name }}</p>
+                                </router-link>
+                            </div>
+                            <div class="text-sm">
+                                <p class="select-none">
+                                    Số người đang học (icon nguoi subscribe):
+                                    {{ course.stu_num || 0 }}
+                                </p>
+                                <p v-if="course.registered">Đã đăng ký</p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- aks -->
+                    <!-- aks -->
+                </div>
             </div>
         </div>
-    </section>
+    </div>
 </template>

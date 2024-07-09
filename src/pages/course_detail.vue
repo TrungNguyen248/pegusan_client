@@ -47,43 +47,47 @@ onMounted(async () => {
 
 <template>
     <div v-if="isLoading" class="text-3xl font-bold">Loading.......</div>
-    <div v-if="error">{{ error }}</div>
-    <div>
-        <div class="container mx-auto max-w-7xl p-4">
-            <div class="">
-                <div class="w-full text-center">
-                    <div class="flex justify-center">
-                        <ul class="text-center border-2 px-10 py-4 rounded-lg">
-                            <router-link
-                                v-for="(lesson, index) in lessonList"
-                                :key="lesson.lesson_id"
-                                :to="{
-                                    name: 'LessonHina',
-                                    params: {
-                                        id: lesson.lesson_id,
-                                        course_id: props.id,
-                                    },
-                                }"
-                                @click="
-                                    lesson._id &&
-                                        courseStore.setLastLessonView(
-                                            lesson._id,
-                                        )
-                                "
-                                class="*:hover:cursor-pointer *:border-[1px] *:border-slate-400 hover:*:border-slate-300 *:shadow-md hover:*:shadow-slate-400 *:p-4 *:mb-4 *:rounded-full *:text-lg *:font-semibold hover:*:transition-all *:transition-all"
+    <div v-else>
+        <div v-if="error">{{ error }}</div>
+        <div v-else>
+            <div class="container mx-auto max-w-7xl p-4">
+                <div class="">
+                    <div class="w-full text-center">
+                        <div class="flex justify-center">
+                            <ul
+                                class="text-center border-2 px-10 sm:px-40 py-4 rounded-lg"
                             >
-                                <li
-                                    :class="
-                                        lesson.learnt
-                                            ? 'bg-green-400 '
-                                            : 'bg-[#ccc] hover:bg-[#eee]'
+                                <router-link
+                                    v-for="(lesson, index) in lessonList"
+                                    :key="lesson.lesson_id"
+                                    :to="{
+                                        name: 'LessonHina',
+                                        params: {
+                                            id: lesson.lesson_id,
+                                            course_id: props.id,
+                                        },
+                                    }"
+                                    @click="
+                                        lesson._id &&
+                                            courseStore.setLastLessonView(
+                                                lesson._id,
+                                            )
                                     "
+                                    class="*:hover:cursor-pointer *:border-[1px] *:border-slate-400 hover:*:border-slate-300 *:shadow-md hover:*:shadow-slate-400 *:p-4 *:mb-4 *:rounded-full *:text-lg *:font-semibold hover:*:transition-all *:transition-all"
                                 >
-                                    Bài {{ index + 1 }}:
-                                    {{ lesson.lesson_title }}
-                                </li>
-                            </router-link>
-                        </ul>
+                                    <li
+                                        :class="
+                                            lesson.learnt
+                                                ? 'bg-green-400 '
+                                                : 'bg-[#ccc] hover:bg-[#eee]'
+                                        "
+                                    >
+                                        Bài {{ index + 1 }}:
+                                        {{ lesson.lesson_title }}
+                                    </li>
+                                </router-link>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

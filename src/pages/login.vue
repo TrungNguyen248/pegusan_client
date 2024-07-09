@@ -53,10 +53,17 @@ async function login() {
 
 <template>
     <!-- BEGIN: Login Form -->
-    <div class="flex h-screen py-5 my-10 xl:h-auto xl:py-0 xl:my-0">
+    <div class="flex h-screen py-5 xl:h-auto xl:py-0 xl:my-0">
         <div
             class="w-full px-5 py-8 mx-auto my-auto bg-white rounded-md shadow-md xl:ml-20 dark:bg-darkmode-600 xl:bg-transparent sm:px-8 xl:p-0 xl:shadow-none sm:w-3/4 lg:w-2/4 xl:w-auto"
         >
+            <div class="flex justify-center">
+                <img
+                    class="w-20 h-[80px] xl:hidden"
+                    src="../assets/images/penguin-logo.svg"
+                    alt="logo"
+                />
+            </div>
             <h2
                 class="text-2xl font-bold text-center intro-x xl:text-3xl xl:text-left"
             >

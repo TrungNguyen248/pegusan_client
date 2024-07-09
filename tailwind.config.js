@@ -71,6 +71,8 @@ module.exports = {
                 2.5: 2.5,
             },
             backgroundImage: {
+                'svg-background':
+                    'url("data:image/svg+xml;charset=utf-8,%0A%3Csvg%20width%3D%22230%22%20height%3D%22230%22%20viewBox%3D%220%200%20125%20125%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%3Cpath%20style%3D%22%22%20fill%3D%22none%22%20stroke%3D%22%23cccccc%22%20d%3D%22M62.5%2C0L62.5%2C125%22%20stroke-width%3D%221%22%20stroke-dasharray%3D%224%2C4%22%3E%3C%2Fpath%3E%0A%20%20%3Cpath%20style%3D%22%22%20fill%3D%22none%22%20stroke%3D%22%23cccccc%22%20d%3D%22M0%2C62.5L125%2C62.5%22%20stroke-width%3D%221%22%20stroke-dasharray%3D%224%2C4%22%3E%3C%2Fpath%3E%0A%3C%2Fsvg%3E")',
                 'menu-active':
                     "url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='80' viewBox='0 0 20 122.1'%3E%3Cpath data-name='Union 1' d='M16.038 122H16v-2.213a95.805 95.805 0 00-2.886-20.735 94.894 94.894 0 00-7.783-20.434A39.039 39.039 0 010 61.051a39.035 39.035 0 015.331-17.567 94.9 94.9 0 007.783-20.435A95.746 95.746 0 0016 2.314V0h4v122h-3.961v.1l-.001-.1z' fill='%23f1f5f8'/%3E%3C/svg%3E\")",
                 'menu-active-dark':
@@ -82,8 +84,37 @@ module.exports = {
                 'bredcrumb-chevron-darkmode':
                     "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='1' stroke-linecap='round' stroke-linejoin='round' class='feather feather-chevron-right breadcrumb__icon'%3E%3Cpolyline points='9 18 15 12 9 6'%3E%3C/polyline%3E%3C/svg%3E\")",
             },
+            animation: {
+                'next-icon-trans': 'next-icon-trans 1s ease-in-out forwards',
+            },
             keyframes: {
                 // Side & simple menu
+                cloud: {
+                    '0%': {
+                        left: '-10%',
+                        transform: 'translateX(-20vw)',
+                    },
+                    '100%': {
+                        transform: 'translateX(50vw)',
+                    },
+                },
+                'next-icon-trans': {
+                    '0%': {
+                        transform: 'translateX(-5px)',
+                        'animation-timing-function':
+                            'cubic-bezier(0.8, 0, 1, 1)',
+                    },
+                    '50%': {
+                        transform: 'translateX(5px)',
+                        'animation-timing-function':
+                            'cubic-bezier(0, 0, 0.2, 1)',
+                    },
+                    '100%': {
+                        transform: 'translateX(0px)',
+                        'animation-timing-function':
+                            'cubic-bezier(0.8, 0, 1, 1)',
+                    },
+                },
                 'intro-divider': {
                     '100%': {
                         opacity: 1,
