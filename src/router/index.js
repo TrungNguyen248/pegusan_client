@@ -3,6 +3,15 @@ import { useAuthStore } from '../stores/auth'
 
 const routes = [
     {
+        path: '/course/:course_id/mina/:id',
+        name: 'LessonMina',
+        meta: {
+            layout: 'default',
+        },
+        component: () => import('../pages/lesson_mina.vue'),
+        props: true,
+    },
+    {
         path: '/login',
         name: 'Login',
         meta: {

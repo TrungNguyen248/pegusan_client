@@ -1,6 +1,7 @@
 const plugin = require('tailwindcss/plugin')
 const colors = require('tailwindcss/colors')
 const { parseColor } = require('tailwindcss/lib/util/color')
+const { transform } = require('lodash')
 
 /** @type {import('tailwindcss').Config} */
 
@@ -28,6 +29,7 @@ module.exports = {
         extend: {
             fontFamily: {
                 quicksand: ['Quicksand', 'sans-serif'],
+                'noto-jp': ['Noto Sans JP', 'sans-serif'],
             },
             colors: {
                 primary: 'rgb(var(--color-primary) / <alpha-value>)',
@@ -86,9 +88,27 @@ module.exports = {
             },
             animation: {
                 'next-icon-trans': 'next-icon-trans 1s ease-in-out forwards',
+                'text-fade': 'text-fade 0.6s linear',
+                'transform-top': 'transform-top 0.5s ease-in-out',
             },
             keyframes: {
                 // Side & simple menu
+                'transform-top': {
+                    '0%': {
+                        transform: 'translate(-50%,-300px) ',
+                    },
+                    '100%': {
+                        transform: 'translateY(-50%,0px)',
+                    },
+                },
+                'text-fade': {
+                    '0%': {
+                        opacity: 0,
+                    },
+                    '100%': {
+                        opacity: 1,
+                    },
+                },
                 cloud: {
                     '0%': {
                         left: '-10%',

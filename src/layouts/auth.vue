@@ -93,11 +93,6 @@ function cloudStyle() {
                             <div class="absolute w-full h-[170px]">
                                 <img
                                     alt=""
-                                    src="../assets/images/simple_pegu.svg"
-                                    class="absolute top-full w-40"
-                                />
-                                <img
-                                    alt=""
                                     src="../assets/images/pegu_hello.svg"
                                     class="absolute top-full left-1/3 w-40"
                                 />

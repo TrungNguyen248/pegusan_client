@@ -8,7 +8,7 @@ const user = authStore.user
 
 <template>
     <div class="bg-[#3C5B6F] top-0 left-0">
-        <Header class="fixed top-0">
+        <Header class="fixed top-0 border-b-[1px] border-[#153448]">
             <template #logo>
                 <div class="h-[100%]">
                     <img
@@ -20,7 +20,7 @@ const user = authStore.user
             <template #menu>
                 <div class="hidden lg:block">
                     <ul
-                        class="flex *:mx-8 *:font-bold *:h-full *:hover:*:text-white"
+                        class="flex *:mx-8 *:font-bold *:h-full *:text-white *:hover:*:text-white"
                     >
                         <li>
                             <router-link to="/course">Khóa học</router-link>

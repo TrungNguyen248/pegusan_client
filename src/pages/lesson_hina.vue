@@ -210,9 +210,6 @@ watch(
         }
     },
 )
-
-//lam tien trinh cau hoi
-//xac nhan khi an tro ve d/s lesson
 </script>
 
 <template>

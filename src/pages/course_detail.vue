@@ -33,13 +33,11 @@ async function fetchCourseDetails() {
             accessToken: authStore.accessToken,
         })
 
-        console.log(data.metadata)
         if (data.status == 'error') {
             error.value = data.message
         } else {
             lessonList.value = data.metadata.listLessons
             typeLesson.value = data.metadata.type
-            console.log(typeLesson.value)
         }
     } catch (err) {
         error.value = err.response?.data
@@ -99,12 +97,31 @@ onMounted(async () => {
             </div>
         </div>
         <div v-if="typeLesson == 'Mina'">
-            <div
-                class="container mx-auto max-w-7xl p-4 mt-[72px]"
-                v-for="(ls, idx) in lessonList"
-                :key="idx"
-            >
-                <p>{{ ls.lesson_title }}</p>
+            <div class="container mx-auto max-w-7xl p-4 mt-[72px]">
+                <div class="py-4 px-4 sm:py-10 sm:px-20 flex flex-col">
+                    <div class="sm:w-1/2">
+                        <router-link
+                            v-for="(ls, idx) in lessonList"
+                            :key="idx"
+                            :to="{
+                                name: 'LessonMina',
+                                params: {
+                                    id: ls._id,
+                                    course_id: props.id,
+                                },
+                            }"
+                            class=""
+                        >
+                            <div
+                                class="py-3 px-7 bg-[#fff5e1] mb-4 rounded-lg cursor-pointer hover:bg-[#948979] *:hover:text-white"
+                            >
+                                <p class="text-lg font-bold text-[#0C1844]">
+                                    {{ ls.lesson_title }}
+                                </p>
+                            </div>
+                        </router-link>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
