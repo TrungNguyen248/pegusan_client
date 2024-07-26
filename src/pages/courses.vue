@@ -150,7 +150,7 @@ onMounted(async () => {
                                             registerCourse(course._id)
                                     "
                                 >
-                                    <p class="text-xl">{{ course.name }}</p>
+                                    <p class="text-lg">{{ course.name }}</p>
                                 </router-link>
                             </div>
                             <div

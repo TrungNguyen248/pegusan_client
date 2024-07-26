@@ -11,6 +11,9 @@ import FlipCard from '../base_components/Card/FlipCard.vue'
 import BaseCard from '../base_components/Card/BaseCard.vue'
 import ListIcon from '../components/Icons/list.vue'
 import FormInput from '../base_components/Form/FormInput.vue'
+import AddIcon from '../components/Icons/add.vue'
+import CancelIcon from '../components/Icons/cancel.vue'
+import ListAddIcon from '../components/Icons/list_add.vue'
 
 const props = defineProps({
     id: {
@@ -41,6 +44,9 @@ const listDeck = ref(null)
 const textErrCheckDeck = ref('')
 const isLoadingList = ref(false)
 const listTitle = ref([])
+const isShowCheckAddList = ref(false)
+const isCheckAdd = ref(false)
+const listChecked = ref({})
 
 const authStore = useAuthStore()
 const user = authStore.user
@@ -188,6 +194,19 @@ function showCreateList() {
 function closeCreateModal() {
     isShowCreateList.value = false
 }
+
+function showCheckAddList() {
+    isShowCheckAddList.value = !isShowCheckAddList.value
+}
+
+function handleCheckAdd(current_id, idx) {
+    listChecked.value[idx] = current_id
+}
+
+function removeFromCheckList(idx) {
+    delete listChecked.value[idx]
+}
+
 async function addListName() {
     try {
         const res = await axios.post(
@@ -228,9 +247,7 @@ async function fetchListName() {
         )
         listDeck.value = res.data.metadata
         isLoadingList.value = false
-        console.log(res.data.metadata)
         for (let i = 0; i < listDeck.value.length; i++) {
-            console.log(listDeck.value[i])
             if (nameDeck.value.trim() === listDeck.value[i].deck_title.trim()) {
                 textErrCheckDeck.value = 'Thư mục đã tồn tại!'
             }
@@ -394,7 +411,7 @@ onUnmounted(() => {
                         <div class="flex w-full justify-end p-4">
                             <div
                                 v-if="!isShowFlc"
-                                class="lg:hidden hover:cursor-pointer flex flex-col justify-center items-center mr-5"
+                                class="lg:hidden hover:cursor-pointer flex flex-col justify-center items-center"
                                 title="List từ ôn tập"
                                 @click="showCreateList()"
                             >
@@ -402,13 +419,15 @@ onUnmounted(() => {
                                     class="w-8 h-[32px]"
                                     color="#e8c9af"
                                 />
-                                <p class="font-medium text-sm text-[#e8c9af]">
+                                <p
+                                    class="select-none font-medium text-sm text-[#e8c9af]"
+                                >
                                     Từ ôn tập
                                 </p>
                             </div>
                             <div
                                 v-if="!isShowFlc"
-                                class="hover:cursor-pointer flex flex-col justify-center items-center"
+                                class="hover:cursor-pointer flex flex-col justify-center items-center ml-4"
                                 title="Flashcard"
                                 @click="showFlc()"
                             >
@@ -416,7 +435,9 @@ onUnmounted(() => {
                                     class="w-8 h-[32px]"
                                     color="#e8c9af"
                                 />
-                                <p class="font-medium text-sm text-[#e8c9af]">
+                                <p
+                                    class="select-none font-medium text-sm text-[#e8c9af]"
+                                >
                                     Flashcard
                                 </p>
                             </div>
@@ -427,6 +448,21 @@ onUnmounted(() => {
                                 @click="backToList()"
                             >
                                 <BackIcon class="w-10" color="#153448" />
+                            </div>
+                            <div
+                                v-if="!isShowFlc"
+                                class="flex flex-col items-center ml-4"
+                                @click="showCheckAddList()"
+                            >
+                                <ListAddIcon
+                                    class="w-8 h-[32px]"
+                                    color="#e8c9af"
+                                />
+                                <p
+                                    class="select-none font-medium text-sm text-[#e8c9af]"
+                                >
+                                    Lưu từ
+                                </p>
                             </div>
                         </div>
                         <div v-if="isShowFlc" class="w-full lg:px-10">
@@ -523,6 +559,31 @@ onUnmounted(() => {
                                         </button>
                                     </td>
                                     <td>{{ item.meaning }}</td>
+                                    <td v-if="isShowCheckAddList">
+                                        <div
+                                            class="hover:cursor-pointer cursor-pointer"
+                                        >
+                                            <AddIcon
+                                                @click="
+                                                    handleCheckAdd(
+                                                        item._id,
+                                                        idx,
+                                                    )
+                                                "
+                                                v-if="!listChecked[idx]"
+                                                color="#33d17a"
+                                                class="w-8 h-[32px]"
+                                            />
+                                            <CancelIcon
+                                                v-if="listChecked[idx]"
+                                                color="#e01b24"
+                                                class="w-8 h-[32px]"
+                                                @click="
+                                                    removeFromCheckList(idx)
+                                                "
+                                            />
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

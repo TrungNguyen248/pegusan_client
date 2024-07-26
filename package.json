@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "@headlessui/vue": "^1.7.22",
+        "@material-tailwind/html": "^2.2.2",
         "axios": "^1.7.2",
         "pinia": "^2.1.7",
         "tailwind-merge": "^2.3.0",

@@ -3,6 +3,15 @@ import { useAuthStore } from '../stores/auth'
 
 const routes = [
     {
+        path: '/profile',
+        name: 'Profile',
+        meta: {
+            layout: 'default',
+            requiresAuth: true,
+        },
+        component: () => import('../pages/profile.vue'),
+    },
+    {
         path: '/course/:course_id/mina/:id',
         name: 'LessonMina',
         meta: {
@@ -28,7 +37,7 @@ const routes = [
         component: () => import('../pages/dict.vue'),
     },
     {
-        path: '/grammar/:level?',
+        path: '/grammar/:level?/:page?',
         name: 'Grammar',
         meta: {
             layout: 'default',

@@ -113,7 +113,7 @@ onMounted(async () => {
                             class=""
                         >
                             <div
-                                class="py-3 px-7 bg-[#fff5e1] mb-4 rounded-lg cursor-pointer hover:bg-[#948979] *:hover:text-white"
+                                class="py-3 px-7 transition-all hover:transition-all bg-[#ffffff] mb-4 border-x-8 border-[#153448] cursor-pointer hover:bg-[#ffd9a1]"
                             >
                                 <p class="text-lg font-bold text-[#0C1844]">
                                     {{ ls.lesson_title }}
