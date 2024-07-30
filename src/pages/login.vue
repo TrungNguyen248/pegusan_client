@@ -90,9 +90,9 @@ async function login() {
                     />
                 </div>
                 <div
-                    class="flex mt-4 text-xs intro-x text-slate-600 dark:text-slate-500 sm:text-sm"
+                    class="justify-between flex mt-4 text-xs intro-x text-slate-600 dark:text-slate-500 sm:text-sm"
                 >
-                    <div class="flex items-center mr-auto">
+                    <!-- <div class="flex items-center mr-auto">
                         <FormCheck.Input
                             id="remember-me"
                             type="checkbox"
@@ -104,25 +104,32 @@ async function login() {
                         >
                             Ghi nhớ tài khoản
                         </label>
-                    </div>
+                    </div> -->
                     <a href="">Quên mật khẩu?</a>
+                    <router-link to="signup"
+                        >Chưa có tài khoản?
+                        <span class="font-medium"
+                            >Đăng ký ngay</span
+                        ></router-link
+                    >
                 </div>
-                <div class="mt-5 text-center intro-x xl:mt-8 xl:text-left">
+                <div
+                    class="mt-5 flex justify-center text-center intro-x xl:mt-8 xl:text-left"
+                >
                     <Button
                         type="submit"
                         variant="'primary'"
-                        class="w-full px-4 py-3 align-top xl:w-32 xl:mr-3 hover:bg-primary hover:text-white"
+                        class="w-full px-4 py-3 align-top xl:text-white xl:bg-[#153448]/40 xl:w-1/2 hover:bg-primary hover:text-white"
                     >
                         Đăng nhập
                     </Button>
-                    <router-link to="signup">
+                    <!-- <router-link to="signup">
                         <Button
-                            variant="'outline-secondary'"
                             class="w-full px-4 py-3 mt-3 align-top xl:w-32 xl:mt-0 hover:bg-primary hover:text-white"
                         >
                             Đăng ký
                         </Button>
-                    </router-link>
+                    </router-link> -->
                 </div>
             </form>
             <div

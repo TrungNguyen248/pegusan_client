@@ -10,6 +10,7 @@ import NextArrow from '../components/Icons/next_arrow.vue'
 import PenWriting from '../components/Icons/pen_writing.vue'
 import Correct from '../components/Icons/correct.vue'
 import Wrong from '../components/Icons/wrong.vue'
+import NextHeliumIcon from '../components/Icons/next_helium.vue'
 
 const props = defineProps({
     id: {
@@ -304,7 +305,7 @@ watch(
                         @click="nextCard"
                         class="bg-green-400 *:hover:animate-next-icon-trans hover:*:transition-all hover:bg-green-600 transition-all hover:text-white px-5 rounded-full font-medium text-lg"
                     >
-                        <NextArrow class="px-2" />
+                        <NextHeliumIcon class="w-16 h-[64px] px-2" />
                     </button>
                 </div>
             </div>
@@ -337,11 +338,12 @@ watch(
                     </div>
                 </div>
                 <div
+                    v-if="currentCard.image"
                     class="w-1/2 flex justify-center sm:w-[40%] overflow-hidden p-4 h-[80%] sm:h-[100%]"
                 >
                     <img
                         class="object-cover rounded-lg"
-                        src="https://i.pinimg.com/564x/3d/aa/a5/3daaa580c31c86277d13f55594895f8a.jpg"
+                        :src="currentCard.image"
                     />
                 </div>
                 <div class="hidden sm:flex w-[20%] p-4 flex-col justify-center">

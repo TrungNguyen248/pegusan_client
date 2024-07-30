@@ -90,20 +90,32 @@ async function signup() {
                         v-model="form.password"
                     />
                 </div>
-                <div class="mt-5 text-center intro-x xl:mt-8 xl:text-left">
-                    <router-link to="login" class="mr-3">
+                <div
+                    class="justify-end flex mt-4 text-xs intro-x text-slate-600 dark:text-slate-500 sm:text-sm"
+                >
+                    <router-link to="login"
+                        >Đã có tài khoản.
+                        <span class="font-medium"
+                            >Đăng nhập ngay</span
+                        ></router-link
+                    >
+                </div>
+                <div
+                    class="mt-5 flex justify-center text-center intro-x xl:mt-8 xl:text-left"
+                >
+                    <!-- <router-link to="login" class="mr-3">
                         <Button
                             variant="'outline-primary'"
                             class="w-full px-4 py-3 mt-3 align-top xl:w-32 xl:mt-0 hover:bg-primary hover:text-white"
                         >
                             Đăng nhập
                         </Button>
-                    </router-link>
+                    </router-link> -->
 
                     <Button
                         type="submit"
                         variant="'outline-secondary'"
-                        class="w-full px-4 py-3 mt-3 align-top xl:w-32 xl:mt-0 hover:bg-primary hover:text-white"
+                        class="w-full px-4 py-3 mt-3 align-top xl:text-white xl:bg-[#153448]/40 xl:w-1/2 xl:mt-0 hover:bg-primary hover:text-white"
                     >
                         Đăng ký
                     </Button>

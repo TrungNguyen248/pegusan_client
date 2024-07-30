@@ -390,7 +390,7 @@ onUnmounted(() => {
                                             textErrCheckDeck !== ''
                                                 ? 'bg-gray-400/40 cursor-not-allowed'
                                                 : 'bg-[#e8c9af]'
-                                        "
+                                        "                                                   
                                         type="submit"
                                         class="mt-5 text-[#153448] px-5 py-2 rounded-full cursor-pointer font-medium"
                                     >

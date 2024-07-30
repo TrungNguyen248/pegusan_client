@@ -4,6 +4,7 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import GroupUserIcon from '../components/Icons/group_user.vue'
 import TickIcon from '../components/Icons/tick.vue'
+import LoaderGif from '../base_components/Loader/Loader.vue'
 
 const courses = ref({})
 const error = ref(null)
@@ -45,7 +46,9 @@ async function fetchCourses() {
                 },
             },
         )
-        isLoading.value = false
+        setTimeout(() => {
+            isLoading.value = false
+        }, 2000)
         courses.value = res.data.metadata
     } catch (err) {
         error.value = err.response?.data
@@ -58,52 +61,11 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div v-if="isLoading" class="container mx-auto max-w-7xl mt-[72px]">
-        <div class="p-4 flex flex-wrap justify-center sm:justify-normal">
-            <div
-                class="relative p-4 xl:w-1/3 sm:w-full md:w-1/2 flex flex-col w-56 h-64 animate-pulse rounded-xl gap-4"
-            >
-                <div
-                    class="bg-neutral-400/50 w-full h-[238px] animate-pulse rounded-md"
-                ></div>
-                <div class="flex flex-col gap-2">
-                    <div
-                        class="bg-neutral-400/50 w-full h-[16px] animate-pulse rounded-md"
-                    ></div>
-                    <div
-                        class="bg-neutral-400/50 w-4/5 h-[16px] animate-pulse rounded-md"
-                    ></div>
-                    <div
-                        class="bg-neutral-400/50 w-full h-[16px] animate-pulse rounded-md"
-                    ></div>
-                    <div
-                        class="bg-neutral-400/50 w-2/4 h-[16px] animate-pulse rounded-md"
-                    ></div>
-                </div>
-            </div>
-
-            <div
-                class="relative xl:w-1/3 sm:w-full md:w-1/2 flex flex-col w-56 h-64 animate-pulse rounded-xl p-4 gap-4"
-            >
-                <div
-                    class="bg-neutral-400/50 w-full h-[238px] animate-pulse rounded-md"
-                ></div>
-                <div class="flex flex-col gap-2">
-                    <div
-                        class="bg-neutral-400/50 w-full h-[16px] animate-pulse rounded-md"
-                    ></div>
-                    <div
-                        class="bg-neutral-400/50 w-4/5 h-[16px] animate-pulse rounded-md"
-                    ></div>
-                    <div
-                        class="bg-neutral-400/50 w-full h-[16px] animate-pulse rounded-md"
-                    ></div>
-                    <div
-                        class="bg-neutral-400/50 w-2/4 h-[16px] animate-pulse rounded-md"
-                    ></div>
-                </div>
-            </div>
-        </div>
+    <div
+        v-if="isLoading"
+        class="relative h-[100svh] flex justify-center bg-[#3C5B6F] items-center z-[100]"
+    >
+        <LoaderGif class="w-56 h-[104px]" />
     </div>
     <div v-else>
         <div class="container mx-auto max-w-7xl mt-[72px]">
@@ -115,7 +77,7 @@ onMounted(async () => {
             <div class="container mx-auto max-w-7xl">
                 <div class="flex flex-wrap justify-center sm:justify-normal">
                     <div
-                        class="relative xl:w-1/3 sm:w-full md:w-1/2 p-4 flex flex-col rounded-2xl"
+                        class="relative xl:w-1/3 w-full md:w-1/2 p-4 flex flex-col rounded-2xl"
                         v-for="course in courses"
                         :key="course._id"
                     >
@@ -129,10 +91,10 @@ onMounted(async () => {
                             "
                             class="relative text-gray-800 font-bold overflow-hidden object-cover rounded-t-2xl"
                         >
-                            <div class=" ">
+                            <div class="w-full">
                                 <img
-                                    class="w-full hover:scale-104 hover:transition-all transition-all"
-                                    src="../assets/images/course_test.jpg"
+                                    class="w-full max-h-[320px] object-cover hover:scale-104 hover:transition-all transition-all"
+                                    :src="course.thumb"
                                 />
                             </div>
                         </router-link>
@@ -153,25 +115,31 @@ onMounted(async () => {
                                     <p class="text-lg">{{ course.name }}</p>
                                 </router-link>
                             </div>
-                            <div
-                                class="absolute py-4 top-0 right-[7%] flex justify-center items-center"
-                            >
-                                <div class="mr-2">
-                                    <span>
-                                        <GroupUserIcon class="w-7 h-[28px]" />
-                                    </span>
+                            <div class="absolute py-4 top-1 right-[7%]">
+                                <div
+                                    class="flex justify-center items-center bg-white border-[1px] border-black rounded-full"
+                                >
+                                    <div class="mr-2 pl-2">
+                                        <span>
+                                            <GroupUserIcon
+                                                class="w-7 h-[28px]"
+                                            />
+                                        </span>
+                                    </div>
+                                    <p class="text-sm pr-2 font-medium">
+                                        {{ course.stu_num || 0 }}
+                                    </p>
                                 </div>
-                                <p class="text-sm">{{ course.stu_num || 0 }}</p>
                             </div>
                             <div class="absolute p-5 top-0 left-0">
                                 <p
-                                    class="flex items-center text-sm px-2 py-1 rounded-full bg-white/30"
+                                    class="flex items-center border-2 border-black text-sm px-2 py-1 rounded-full bg-white"
                                     v-if="course.registered"
                                 >
                                     <span class="mr-2">
                                         <TickIcon class="w-6 h-[24px]" />
                                     </span>
-                                    <span class="text-white font-medium"
+                                    <span class="text-black font-medium"
                                         >Đã đăng ký</span
                                     >
                                 </p>

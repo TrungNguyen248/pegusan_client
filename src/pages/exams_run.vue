@@ -47,48 +47,68 @@ onMounted(() => {
 <template>
     <div class="relative container mx-auto max-w-7xl mt-12">
         <div class="flex py-10">
-            <div class="w-3/4 border-2 border-gray-500 px-10">
+            <div class="w-full lg:w-3/4 px-10">
                 <div
                     v-for="(question, index) in listQuestions"
                     :key="index"
                     :id="'question_' + (index + 1)"
                 >
-                    <h3>{{ index + 1 }}. {{ question.content_text }}</h3>
-                    <div class="grid lg:grid-cols-2 sm:grid-cols-1 gap-4">
+                    <h3 class="text-white/90 font-medium text-lg">
+                        Câu {{ index + 1 }}:
+                        <span>{{ question.content_text }}</span>
+                    </h3>
+                    <div class="flex flex-wrap">
                         <div
                             v-for="(q, i) in question.quiz"
                             :key="q"
-                            class="border-2 border-gray-400"
+                            class="w-full sm:w-1/2 p-4"
                         >
                             <input
                                 :id="index + '_' + i"
                                 type="radio"
                                 :name="'value_' + index"
                                 :value="i"
+                                class="hidden"
                                 @change="handleUserAnswer(index, i)"
                             />
-                            <label class="" :for="index + '_' + i">
-                                <div>O</div>
-                                <div class="pl-2 py-4 text-left">{{ q }}</div>
-                            </label>
+                            <div
+                                class="border-2 rounded-lg"
+                                :class="
+                                    userAnswers[index] === i
+                                        ? 'bg-[#153448] text-white '
+                                        : ''
+                                "
+                            >
+                                <label
+                                    class="flex items-center"
+                                    :for="index + '_' + i"
+                                >
+                                    <div class="ml-2">O</div>
+                                    <div
+                                        class="pl-2 py-4 text-left font-medium"
+                                    >
+                                        {{ q }}
+                                    </div>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div
-                class="w-1/4 border-2 border-gray-500 fixed top-[150px] right-0 h-[80%]"
+                class="hidden lg:block lg:w-1/4 fixed top-[150px] right-0 h-[80%]"
             >
                 <div class="px-[15px] mb-5 block float-left w-full">
                     <div
                         class="w-full float-left max-h-[100px] overflow-hidden overflow-y-auto"
                     >
                         <div
-                            class="select-none w-8 h-[32px] rounded-md mb-1 mr-1 float-left text-center text-gray-600 font-medium leading-8 text-sm border-[1px] border-solid border-[#e6e6e6]"
+                            class="select-none w-8 h-[32px] rounded-md mb-1 mr-1 float-left text-center font-bold leading-8 text-sm border-[1px] border-solid border-[#e6e6e6]"
                             v-for="i in listQuestions.length"
                             :key="i"
                             :class="
                                 userAnswers[i - 1] !== undefined
-                                    ? 'bg-blue-300'
+                                    ? 'bg-[#153448] text-white'
                                     : 'bg-white'
                             "
                         >
@@ -104,7 +124,11 @@ onMounted(() => {
                                 },
                             }"
                         >
-                            <button class="w-full bg-blue-200">Nop bai</button>
+                            <button
+                                class="w-full text-[#153448] bg-[#e8c9af] font-bold py-2 rounded-xl"
+                            >
+                                Nộp bài
+                            </button>
                         </router-link>
                     </div>
                 </div>

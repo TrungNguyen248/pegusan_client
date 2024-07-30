@@ -73,7 +73,7 @@ const routes = [
         props: true,
     },
     {
-        path: '/kanji/:level?',
+        path: '/kanji/:level?/:page?',
         name: 'Kanji',
         meta: {
             layout: 'default',

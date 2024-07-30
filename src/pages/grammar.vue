@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
 import NextPageIcon from '../components/Icons/next_page.vue'
+import LoaderGif from '../base_components/Loader/Loader.vue'
 
 const props = defineProps({
     level: {
@@ -41,7 +42,9 @@ async function fetchGrammarByLevel(level = 'N5', page = 1) {
         )
         totalGrammar.value = res.data.metadata.count
         listGrammar.value = res.data.metadata.grammars
-        isLoading.value = false
+        setTimeout(() => {
+            isLoading.value = false
+        }, 2000)
     } catch (error) {
         console.log(error)
     }
@@ -50,22 +53,28 @@ async function fetchGrammarByLevel(level = 'N5', page = 1) {
 const pagePagi = computed(() => {
     const arr = []
     const skip = 5
-    if (props.page != '') {
-        if (props.page / skip < totalListCount.value) {
-            const start = Math.ceil(props.page / 5)
-            if (start * skip < totalPage.value) {
-                for (let i = (start - 1) * skip; i < start * skip; i++) {
-                    arr.push(i + 1)
-                }
-            } else {
-                for (let i = (start - 1) * skip; i < totalPage.value; i++) {
-                    arr.push(i + 1)
-                }
-            }
+    if (totalPage.value < skip) {
+        for (let i = 1; i <= totalPage.value; i++) {
+            arr.push(i)
         }
     } else {
-        for (let i = 1; i <= 5; i++) {
-            arr.push(i)
+        if (props.page != '') {
+            if (props.page / skip < totalListCount.value) {
+                const start = Math.ceil(props.page / 5)
+                if (start * skip < totalPage.value) {
+                    for (let i = (start - 1) * skip; i < start * skip; i++) {
+                        arr.push(i + 1)
+                    }
+                } else {
+                    for (let i = (start - 1) * skip; i < totalPage.value; i++) {
+                        arr.push(i + 1)
+                    }
+                }
+            }
+        } else {
+            for (let i = 1; i <= 5; i++) {
+                arr.push(i)
+            }
         }
     }
 
@@ -74,13 +83,15 @@ const pagePagi = computed(() => {
 
 function nextPageList() {
     const numPage = Number.parseInt(props.page) || 1
-    router.push({
-        name: 'Grammar',
-        params: {
-            level: props.level || 'n5',
-            page: numPage + 1,
-        },
-    })
+    if (numPage < totalPage.value) {
+        router.push({
+            name: 'Grammar',
+            params: {
+                level: props.level || 'n5',
+                page: numPage + 1,
+            },
+        })
+    }
 }
 
 function previousPageList() {
@@ -100,7 +111,7 @@ const currentGrammar = computed(
     () => listGrammar.value[currentGrammarIndex.value],
 )
 
-const totalPage = computed(() => Math.floor(totalGrammar.value / 12))
+const totalPage = computed(() => Math.floor(totalGrammar.value / 12) + 1)
 
 const totalListCount = computed(() => Math.ceil(totalPage.value / 5))
 
@@ -137,7 +148,12 @@ onMounted(async () => {
 </script>
 
 <template>
-    <p v-if="isLoading">Loading .....</p>
+    <div
+        v-if="isLoading"
+        class="relative h-[100svh] flex justify-center bg-[#3C5B6F] items-center z-[100]"
+    >
+        <LoaderGif class="w-56 h-[104px]" />
+    </div>
     <div v-else>
         <div
             v-if="isVisible"
@@ -229,68 +245,74 @@ onMounted(async () => {
                 Tổng hợp ngữ pháp
             </p>
             <div class="flex">
-                <div class="w-full px-10 sm:w-[70%]">
-                    <div class="flex flex-wrap lg:h-[400px]">
-                        <div
-                            v-for="(grammar, index) in listGrammar"
-                            :key="index"
-                            class="w-full sm:w-1/2 lg:w-1/3 p-2"
-                        >
+                <div class="flex flex-col w-full sm:w-[70%]">
+                    <div class="px-10 py-5">
+                        <div class="flex flex-wrap lg:h-[420px]">
                             <div
-                                class="bg-[#153448] transition-all hover:bg-[#153448]/40 hover:border-[#e8c9af] py-4 rounded-md border-2 border-white/60 text-center cursor-pointer"
-                                @click="showGrammar(index)"
+                                v-for="(grammar, index) in listGrammar"
+                                :key="index"
+                                class="w-full sm:w-1/2 lg:w-1/3 p-2"
                             >
-                                <p class="text-white text-lg truncate px-3">
-                                    {{ grammar.title }}
-                                </p>
-                                <p class="text-white text-base truncate px-3">
-                                    {{ grammar.mean }}
-                                </p>
+                                <div
+                                    class="bg-[#153448] transition-all hover:bg-[#153448]/40 hover:border-[#d18242] py-4 rounded-xl border-2 border-white/60 text-center cursor-pointer"
+                                    @click="showGrammar(index)"
+                                >
+                                    <p class="text-white text-lg truncate px-3">
+                                        {{ grammar.title }}
+                                    </p>
+                                    <p
+                                        class="text-white text-base truncate px-3"
+                                    >
+                                        {{ grammar.mean }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="flex justify-center items-center">
+                        <button
+                            class="text-white py-2 px-3 rotate-180"
+                            @click="previousPageList()"
+                        >
+                            <NextPageIcon class="w-8 h-[32px]" />
+                        </button>
+                        <ul class="flex justify-end *:font-bold *:mx-1">
+                            <router-link
+                                v-for="it in pagePagi"
+                                :key="it"
+                                :to="{
+                                    name: 'Grammar',
+                                    params: {
+                                        level: props.level || 'n5',
+                                        page: it,
+                                    },
+                                }"
+                            >
+                                <li
+                                    class="flex items-center justify-center w-7 h-[28px] rounded-full"
+                                    :class="
+                                        props.page === '' && it == 1
+                                            ? 'bg-white text-[#153448]'
+                                            : props.page === it.toString()
+                                              ? 'bg-white text-[#153448]'
+                                              : 'bg-[#153448] text-white'
+                                    "
+                                >
+                                    {{ it }}
+                                </li>
+                            </router-link>
+                        </ul>
+                        <button
+                            class="text-white py-2 px-3"
+                            @click="nextPageList()"
+                        >
+                            <NextPageIcon class="w-8 h-[32px]" />
+                        </button>
+                    </div>
                 </div>
-
                 <div
                     class="hidden sm:block w-[30%] bg-slate-400 rounded-xl"
                 ></div>
-            </div>
-            <div class="flex justify-center items-center mt-10">
-                <button
-                    class="text-white py-2 px-3 rotate-180"
-                    @click="previousPageList()"
-                >
-                    <NextPageIcon class="w-8 h-[32px]" />
-                </button>
-                <ul class="flex justify-end *:font-bold *:mx-1">
-                    <router-link
-                        v-for="it in pagePagi"
-                        :key="it"
-                        :to="{
-                            name: 'Grammar',
-                            params: {
-                                level: props.level || 'n5',
-                                page: it,
-                            },
-                        }"
-                    >
-                        <li
-                            class="flex items-center justify-center w-7 h-[28px] rounded-full"
-                            :class="
-                                props.page === '' && it == 1
-                                    ? 'bg-white text-[#153448]'
-                                    : props.page === it.toString()
-                                      ? 'bg-white text-[#153448]'
-                                      : 'bg-[#153448] text-white'
-                            "
-                        >
-                            {{ it }}
-                        </li>
-                    </router-link>
-                </ul>
-                <button class="text-white py-2 px-3" @click="nextPageList()">
-                    <NextPageIcon class="w-8 h-[32px]" />
-                </button>
             </div>
         </div>
     </div>
