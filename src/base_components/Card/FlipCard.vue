@@ -1,5 +1,5 @@
 <template>
-    <div class="flip-card" @click="toggleFlip">
+    <div class="w-svw sm:w-[400px] flip-card" @click="toggleFlip">
         <div class="flip-card-inner" :class="{ flip: isFlipped }">
             <div class="flip-card-front">
                 <slot name="front" />
@@ -24,12 +24,14 @@ const toggleFlip = () => {
 <style scoped>
 .flip-card {
     perspective: 1000px;
+    display: flex;
+    justify-content: center;
 }
 
 .flip-card-inner {
     position: relative;
-    width: 350px;
-    height: 500px;
+    width: 90%;
+    height: 470px;
     transition: transform 0.7s;
     transform-style: preserve-3d;
 }
@@ -46,6 +48,7 @@ const toggleFlip = () => {
     backface-visibility: hidden;
     border: 1px solid #ccc;
     border-radius: 10px;
+    background-color: #153448;
 }
 
 .flip-card-front {

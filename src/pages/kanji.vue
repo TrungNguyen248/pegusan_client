@@ -366,9 +366,9 @@ onMounted(async () => {
                 </table>
             </div>
         </div>
-        <div class="container mx-auto max-w-7xl py-10">
+        <div class="container mx-auto max-w-7xl py-10 min-h-[100svh]">
             <p class="text-2xl text-white font-bold px-10 py-4">
-                Tổng hợp ngữ pháp
+                Tổng hợp Kanji
             </p>
             <div class="flex">
                 <div class="flex flex-col w-full sm:w-3/4">

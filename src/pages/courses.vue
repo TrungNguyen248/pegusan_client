@@ -68,14 +68,16 @@ onMounted(async () => {
         <LoaderGif class="w-56 h-[104px]" />
     </div>
     <div v-else>
-        <div class="container mx-auto max-w-7xl mt-[72px]">
-            <div class="py-5 px-2 sm:py-10 lg:px-5 lg:ml-5">
-                <p class="text-lg text-white font-bold">Danh sách khóa học</p>
-            </div>
+        <div class="container mx-auto max-w-7xl py-10 mt-[72px]">
+            <p class="text-2xl text-white font-bold px-10 py-4">
+                Danh sách khóa học
+            </p>
         </div>
-        <div class="">
-            <div class="container mx-auto max-w-7xl">
-                <div class="flex flex-wrap justify-center sm:justify-normal">
+        <div>
+            <div class="container mx-auto max-w-7xl min-h-[100svh]">
+                <div
+                    class="flex flex-wrap justify-center sm:justify-normal px-5"
+                >
                     <div
                         class="relative xl:w-1/3 w-full md:w-1/2 p-4 flex flex-col rounded-2xl"
                         v-for="course in courses"
@@ -93,7 +95,7 @@ onMounted(async () => {
                         >
                             <div class="w-full">
                                 <img
-                                    class="w-full max-h-[320px] object-cover hover:scale-104 hover:transition-all transition-all"
+                                    class="w-full max-h-[300px] object-cover hover:scale-104 hover:transition-all transition-all"
                                     :src="course.thumb"
                                 />
                             </div>

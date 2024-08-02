@@ -41,6 +41,7 @@ async function fetchCourseDetails() {
             }, 2000)
             lessonList.value = data.metadata.listLessons
             typeLesson.value = data.metadata.type
+            console.log(data.metadata)
         }
     } catch (err) {
         error.value = err.response?.data
@@ -62,13 +63,15 @@ onMounted(async () => {
     <div v-else>
         <div v-if="error">{{ error }}</div>
         <div v-if="typeLesson == 'Hina'">
-            <div class="container mx-auto max-w-7xl p-8 mt-[72px]">
-                <p class="fixed text-white text-2xl font-bold">
+            <div class="container mx-auto max-w-7xl mt-[72px]">
+                <p
+                    class="text-lg flex w-full lg:w-auto justify-center sm:justify-start px-5 py-3 fixed text-white sm:text-2xl max-w-7xl font-bold z-40 lg:bg-transparent bg-[#153448]"
+                >
                     Bảng chữ cái Hiragana và Katakana
                 </p>
             </div>
-            <div class="container mx-auto max-w-7xl p-4">
-                <div class="py-5 sm:flex">
+            <div class="container mx-auto max-w-7xl p-4 mt-[72px]">
+                <div class="py-5 sm:flex mt-10">
                     <div class="relative z-10 w-full text-center">
                         <div class="flex justify-center">
                             <ul

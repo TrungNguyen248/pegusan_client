@@ -25,19 +25,21 @@ const props = defineProps({
 
 const router = useRouter()
 
-const wordList = ref([])
-const numQuestions = ref(0)
 const isLoading = ref(true)
-const currentCardIndex = ref(0)
-const cardAnswer = ref(false)
 const isCorrect = ref(null)
-const percentCorrect = ref(0)
+const isDisable = ref(false)
 const end = ref(false)
 const learnt = ref(null)
+
+const wordList = ref([])
+const numQuestions = ref(0)
+const currentCardIndex = ref(0)
+const cardAnswer = ref(false)
+const percentCorrect = ref(0)
+const point = ref(0)
+
 const svgContent = ref(null)
 const elSvg = ref(null)
-const isDisable = ref(false)
-
 const audioEl = ref(null)
 
 const authStore = useAuthStore()
@@ -95,7 +97,7 @@ function waitForAnimation(stroke_num) {
 }
 
 async function submitProgress() {
-    const res = await axios.post(
+    await axios.post(
         'http://localhost:5000/v1/api/progress',
         {
             course: props.course_id,
@@ -143,6 +145,28 @@ async function fetchLessonContent() {
         ...res.data.metadata.questions,
     ]
     isLoading.value = false
+    console.log(res.data.metadata)
+}
+
+async function submitPoint() {
+    const res = await axios.post(
+        'http://localhost:5000/v1/api/leader',
+        {
+            userId: user._id,
+            name: user.name,
+            avatar: user.avatar,
+            point_sm: point.value,
+        },
+        {
+            headers: {
+                'x-api-key':
+                    'f19a5a8992310cd9dfcc8ce99fca99a2a1e5f28a4f3049f83c112565992066270310a4e5628169ad6e0ed6b113386f8a2a1be3e1c3ba0b6c61ceeb97f0ec8b61',
+                'x-client-id': user._id,
+                authorization: authStore.accessToken,
+            },
+        },
+    )
+    user.level = res.data.metadata.level
 }
 
 const progress = computed(() => {
@@ -164,6 +188,7 @@ function nextCard() {
         end.value = true
         if (learnt.value != true) {
             submitProgress()
+            submitPoint()
         }
     }
 }
@@ -190,6 +215,7 @@ function checkAnswer(event) {
     if (currentCard.value.value === textAnswer) {
         percentCorrect.value++
         isCorrect.value = true
+        point.value += currentCard.value.point
     } else {
         isCorrect.value = false
     }
@@ -376,7 +402,7 @@ watch(
             </div>
             <p class="text-lg font-bold text-white">Hoàn thành bài học!</p>
             <p class="text-white font-bold px-2 rounded-full bg-[#948979]">
-                {{ (percentCorrect / numQuestions) * 100 }} %
+                {{ Math.floor((percentCorrect / numQuestions) * 100) }} %
             </p>
             <p
                 class="text-white font-bold mt-3 text-lg underline transition-all hover:transition-all hover:text-[#ccc] hover:cursor-pointer"

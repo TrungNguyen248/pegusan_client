@@ -3,6 +3,34 @@ import { useAuthStore } from '../stores/auth'
 
 const routes = [
     {
+        path: '/leaderboard/',
+        name: 'Leaderboard',
+        meta: {
+            layout: 'default',
+            requiresAuth: true,
+        },
+        component: () => import('../pages/leaderboard.vue'),
+    },
+    {
+        path: '/review/:id',
+        name: 'ReviewDetail',
+        meta: {
+            layout: 'default',
+            requiresAuth: true,
+        },
+        component: () => import('../pages/review_detail.vue'),
+        props: true,
+    },
+    {
+        path: '/review',
+        name: 'Review',
+        meta: {
+            layout: 'default',
+            requiresAuth: true,
+        },
+        component: () => import('../pages/review.vue'),
+    },
+    {
         path: '/profile',
         name: 'Profile',
         meta: {

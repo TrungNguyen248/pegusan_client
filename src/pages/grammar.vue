@@ -240,7 +240,7 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
-        <div class="container mx-auto max-w-7xl py-10 mt-[72px]">
+        <div class="container mx-auto max-w-7xl py-10 mt-[72px] min-h-[100svh]">
             <p class="text-2xl text-white font-bold px-10 py-4">
                 Tổng hợp ngữ pháp
             </p>

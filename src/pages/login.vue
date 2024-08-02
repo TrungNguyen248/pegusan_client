@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import FormInput from '../base_components/Form/FormInput.vue'
 import FormCheck from '../base_components/Form/FormCheck'
@@ -8,6 +8,10 @@ import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
+
+const props = defineProps({
+    message: String,
+})
 
 const form = ref({
     email: '',
@@ -49,11 +53,14 @@ async function login() {
         }) // ToastOptions
     }
 }
+
+onMounted(() => {})
 </script>
 
 <template>
     <!-- BEGIN: Login Form -->
     <div class="flex h-screen py-5 xl:h-auto xl:py-0 xl:my-0">
+        <div></div>
         <div
             class="w-full px-5 py-8 mx-auto my-auto bg-white rounded-md shadow-md xl:ml-20 dark:bg-darkmode-600 xl:bg-transparent sm:px-8 xl:p-0 xl:shadow-none sm:w-3/4 lg:w-2/4 xl:w-auto"
         >
@@ -84,7 +91,7 @@ async function login() {
                     <FormInput
                         type="password"
                         class="block px-4 py-3 mt-4 intro-x login__input min-w-full xl:min-w-[350px]"
-                        placeholder="Password"
+                        placeholder="Mật khẩu"
                         required
                         v-model="form.password"
                     />
@@ -119,7 +126,12 @@ async function login() {
                     <Button
                         type="submit"
                         variant="'primary'"
-                        class="w-full px-4 py-3 align-top xl:text-white xl:bg-[#153448]/40 xl:w-1/2 hover:bg-primary hover:text-white"
+                        :class="
+                            form.email.length > 0 && form.password.length > 0
+                                ? 'xl:bg-[#153448]'
+                                : 'xl:bg-[#153448]/40'
+                        "
+                        class="w-full px-4 py-3 align-top xl:text-white xl:w-1/2 hover:bg-[#153448] hover:text-white"
                     >
                         Đăng nhập
                     </Button>

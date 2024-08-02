@@ -7,7 +7,6 @@ import KanjivgAnimate from '../assets/js/KanjivgAnimate.min.js'
 import FlashcardIcon from '../components/Icons/flashcard.vue'
 import NextHeliumIcon from '../components/Icons/next_helium.vue'
 import BackIcon from '../components/Icons/back.vue'
-import FlipCard from '../base_components/Card/FlipCard.vue'
 import BaseCard from '../base_components/Card/BaseCard.vue'
 import ListIcon from '../components/Icons/list.vue'
 import FormInput from '../base_components/Form/FormInput.vue'
@@ -29,23 +28,25 @@ const props = defineProps({
 const grammars = ref(null)
 const vocabs = ref(null)
 const kaiwas = ref(null)
+
 const isLoading = ref(true)
+const isShowCheckAddList = ref(false)
+const isVisible = ref(false)
+const isShowCreateList = ref(false)
+const isLoadingList = ref(false)
+const isShowFlc = ref(false)
+
+const idDeck = ref('')
 const svgContent = ref([])
 const elSvg = ref(null)
 const elSvg1 = ref(null)
-const isVisible = ref(false)
 const currentCardIndex = ref(0)
 const end = ref(false)
-const isShowFlc = ref(false)
 const currentContent = ref('')
-const isShowCreateList = ref(false)
 const nameDeck = ref('')
 const listDeck = ref(null)
 const textErrCheckDeck = ref('')
-const isLoadingList = ref(false)
 const listTitle = ref([])
-const isShowCheckAddList = ref(false)
-const isCheckAdd = ref(false)
 const listChecked = ref({})
 
 const authStore = useAuthStore()
@@ -196,7 +197,12 @@ function closeCreateModal() {
 }
 
 function showCheckAddList() {
-    isShowCheckAddList.value = !isShowCheckAddList.value
+    //show thu muc de chon truoc khi them tu
+    isShowCreateList.value = true
+}
+
+function hiddenCheckAddList() {
+    isShowCheckAddList.value = false
 }
 
 function handleCheckAdd(current_id, idx) {
@@ -205,6 +211,38 @@ function handleCheckAdd(current_id, idx) {
 
 function removeFromCheckList(idx) {
     delete listChecked.value[idx]
+}
+
+function getDeckId(val) {
+    listChecked.value = {}
+    idDeck.value = val
+    isShowCreateList.value = false
+    isShowCheckAddList.value = true
+}
+
+async function saveVocabsToDeck() {
+    try {
+        await axios.post(
+            'http://localhost:5000/v1/api/flashcard/add',
+            {
+                deck_id: idDeck.value,
+                type: 'vocab',
+                vocab: listChecked.value,
+            },
+            {
+                headers: {
+                    'x-api-key':
+                        'f19a5a8992310cd9dfcc8ce99fca99a2a1e5f28a4f3049f83c112565992066270310a4e5628169ad6e0ed6b113386f8a2a1be3e1c3ba0b6c61ceeb97f0ec8b61',
+                    'x-client-id': user._id,
+                    authorization: authStore.accessToken,
+                },
+            },
+        )
+        isShowCheckAddList.value = false
+    } catch (err) {
+        console.log(err)
+        isShowCheckAddList.value = false
+    }
 }
 
 async function addListName() {
@@ -300,6 +338,27 @@ onUnmounted(() => {
         <p>Loading..........</p>
     </div>
     <div v-else>
+        <div v-if="isShowCheckAddList">
+            <div
+                class="fixed left-1/2 rounded-b-xl -translate-x-[50%] h-[14%] w-full sm:w-[580px] animate-transform-top inset-0 bg-white z-50"
+            >
+                <p class="py-2 px-4 text-lg">Lưu thay đổi</p>
+                <div class="flex justify-center items-center">
+                    <button
+                        class="px-5 py-2 font-bold rounded-full border-2 text-green-600"
+                        @click="saveVocabsToDeck()"
+                    >
+                        Lưu
+                    </button>
+                    <button
+                        class="ml-10 px-5 py-2 font-bold rounded-full border-2 text-red-500"
+                        @click="hiddenCheckAddList()"
+                    >
+                        Hủy
+                    </button>
+                </div>
+            </div>
+        </div>
         <div class="container mx-auto max-w-7xl mt-[72px]">
             <div class="flex">
                 <div class="lg:w-[70%] w-full px-2 sm:pl-20 flex flex-col">
@@ -356,10 +415,10 @@ onUnmounted(() => {
                     >
                         <div
                             v-if="isShowCreateList"
-                            class="fixed p-4 left-1/2 rounded-b-xl -translate-x-[50%] h-[200px] w-full sm:w-[480px] animate-transform-top flex flex-col items-center inset-0 bg-white z-50"
+                            class="fixed p-4 left-1/2 rounded-b-xl -translate-x-[50%] h-[70%] w-full sm:w-[580px] animate-transform-top flex flex-col items-center inset-0 bg-white z-50"
                         >
                             <p
-                                class="px-3 py-1 text-left w-full text-[#153448] font-medium"
+                                class="px-3 py-1 text-left w-full text-[#153448] font-bold"
                             >
                                 Tên thư mục ôn tập:
                             </p>
@@ -390,7 +449,7 @@ onUnmounted(() => {
                                             textErrCheckDeck !== ''
                                                 ? 'bg-gray-400/40 cursor-not-allowed'
                                                 : 'bg-[#e8c9af]'
-                                        "                                                   
+                                        "
                                         type="submit"
                                         class="mt-5 text-[#153448] px-5 py-2 rounded-full cursor-pointer font-medium"
                                     >
@@ -407,6 +466,25 @@ onUnmounted(() => {
                                     color="#153448"
                                 />
                             </div>
+                            <div
+                                class="customs_scroll border-t-2 overflow-y-auto h-[100%] mt-2 w-full px-4 py-2"
+                            >
+                                <p class="font-bold">
+                                    Thư mục đã tạo (Chọn để thêm từ)
+                                </p>
+                                <div
+                                    v-for="(deck, idx) in listDeck"
+                                    :key="idx"
+                                    class="sm:px-20"
+                                >
+                                    <div
+                                        @click="getDeckId(deck._id)"
+                                        class="transition-all hover:transition-all rounded-lg hover:cursor-pointer hover:border-[#e8c9af] border-[#153448] border-2 hover:text-white hover:bg-[#153448]/80 px-2 py-3 text-[#e8c9af] bg-[#153448] mt-2 font-medium flex justify-between"
+                                    >
+                                        <p>{{ deck.deck_title }}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="flex w-full justify-end p-4">
                             <div
@@ -422,7 +500,7 @@ onUnmounted(() => {
                                 <p
                                     class="select-none font-medium text-sm text-[#e8c9af]"
                                 >
-                                    Từ ôn tập
+                                    T.mục ôn tập
                                 </p>
                             </div>
                             <div
@@ -662,18 +740,15 @@ onUnmounted(() => {
                     </div>
                     <div class="px-4">
                         <div
-                            class="border-2 py-2 flex items-center justify-between"
+                            class="border-2 py-2 rounded-lg flex items-center justify-between"
                         >
-                            <div class="flex">
+                            <div class="flex items-center">
                                 <span class="px-2">
-                                    <ListIcon class="w-6 h-[24px]" />
+                                    <ListIcon class="w-8 h-[32px]" />
                                 </span>
                                 <p class="text-base font-medium text-white">
-                                    Thư mục ôn tập từ của bạn
+                                    Thư mục ôn tập
                                 </p>
-                            </div>
-                            <div @click="showCreateList()" class="p-2 bg-white">
-                                +
                             </div>
                         </div>
                         <div v-if="isLoadingList">Loading.....</div>
@@ -732,7 +807,7 @@ onUnmounted(() => {
 }
 
 .customs_scroll::-webkit-scrollbar-track {
-    background-color: #e8c9af;
+    background-color: #ffffff;
 }
 .customs_scroll::-webkit-scrollbar-thumb {
     background-image: linear-gradient(-45deg, #153448, #153448);
