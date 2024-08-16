@@ -148,12 +148,21 @@ async function fetchLessonContent() {
     console.log(res.data.metadata)
 }
 
+function convertToUnicode(inputStr) {
+    let outputStr = ''
+    for (let i = 0; i < inputStr.length; i++) {
+        let charCode = inputStr.charCodeAt(i)
+        outputStr += '\\u' + charCode.toString(16).padStart(4, '0')
+    }
+    return outputStr
+}
+
 async function submitPoint() {
     const res = await axios.post(
         'http://localhost:5000/v1/api/leader',
         {
             userId: user._id,
-            name: user.name,
+            name: convertToUnicode(user.name),
             avatar: user.avatar,
             point_sm: point.value,
         },
@@ -168,7 +177,7 @@ async function submitPoint() {
     )
     user.level = res.data.metadata.level
 }
-
+console.log(user)
 const progress = computed(() => {
     return (currentCardIndex.value / wordList.value.length) * 100
 })
@@ -242,18 +251,18 @@ watch(
 <template>
     <div v-if="isLoading" class="text-3xl font-bold">Loading ....</div>
     <div
-        class="flex justify-center w-full text-white min-h-screen sm:py-4 py-0 bg-[#eee]"
+        class="flex justify-center w-full text-white min-h-screen sm:py-4 py-0 bg-[#153448]"
         v-else-if="!end"
     >
         <div
-            class="relative sm:border-2 bg-[#153448] w-[768px] sm:rounded-3xl overflow-hidden p-4"
+            class="relative sm:border-2 sm:border-[#BED1CF] bg-[#FEFAF6] w-[768px] sm:rounded-3xl overflow-hidden p-4"
         >
             <div class="px-4">
                 <div
-                    class="w-full h-[16px] bg-[#3c5b6f] mt-2 rounded-2xl overflow-hidden"
+                    class="w-full h-[16px] bg-[#fff] mt-2 rounded-2xl overflow-hidden border-2 border-[#BED1CF]"
                 >
                     <div
-                        class="h-[16px] bg-gradient-to-r from-[#72edad] to-emerald-600 transition-all"
+                        class="h-[16px] bg-gradient-to-r from-green-300 to-green-500 transition-all"
                         :style="{ width: progress + '%' }"
                     ></div>
                 </div>
@@ -265,13 +274,13 @@ watch(
                 >
                     <div class="items-center flex flex-col">
                         <div
-                            class="bg-svg-background bg-cover w-[230px] h-[230px] border-2 rounded-2xl bg-white font-bold mb-4"
+                            class="bg-svg-background bg-cover w-[230px] h-[230px] border-2 border-[#BED1CF] rounded-2xl bg-white font-bold mb-4"
                             v-html="svgContent"
                             ref="elSvg"
                         ></div>
                         <div class="flex">
                             <button
-                                class="kanjivg-button mr-4 flex items-center justify-center w-12 h-[48px] bg-white rounded-xl hover:cursor-pointer hover:*:transition-all"
+                                class="kanjivg-button mr-4 flex items-center p-2 justify-center border-2 border-black w-12 h-[48px] bg-white rounded-xl hover:cursor-pointer hover:*:transition-all"
                                 data-kanjivg-target="#animateMe"
                                 @click="waitForAnimation(4)"
                                 :disabled="isDisable"
@@ -280,7 +289,7 @@ watch(
                             </button>
                             <button
                                 @click="playAudio"
-                                class="w-12 h-[48px] flex items-center justify-center bg-white hover:*:transition-all hover:cursor-pointer rounded-xl overflow-hidden"
+                                class="w-12 h-[48px] p-2 flex items-center justify-center bg-white border-black border-2 hover:*:transition-all hover:cursor-pointer rounded-xl overflow-hidden"
                             >
                                 <AudioIcon class="w-10 h-[40px]" />
                             </button>
@@ -296,28 +305,31 @@ watch(
                     "
                     controls
                 ></audio>
-                <p v-if="currentCard.content" class="font-semibold px-4">
+                <p
+                    v-if="currentCard.content"
+                    class="font-semibold px-4 text-black"
+                >
                     Hãy chọn đáp án đúng tương ứng với cách phát âm:
                 </p>
                 <div
                     :class="currentCard.content ? 'mt-4 sm:mt-20' : ''"
-                    class="text-center font-normal text-3xl py-7"
+                    class="text-center font-[600] text-3xl py-7 text-black"
                 >
                     <p>
                         {{ currentCard.word || currentCard.content }}
                     </p>
                 </div>
                 <div
-                    class="absolute right-0 bottom-0 p-4 w-full flex flex-wrap hover:*:cursor-pointer hover:*:bg-emerald-600 hover:*:text-white hover:*:transition-all *:transition-all *:font-bold *:text-lg *:text-black *:text-center *:bg-[#dee2e6]"
+                    class="absolute right-0 bottom-0 p-4 w-full flex flex-wrap hover:*:cursor-pointer hover:*:bg-[#153448] hover:*:text-white hover:*:transition-all *:transition-all *:font-bold *:text-lg *:text-black *:text-center *:bg-[#FFF7F1]"
                 >
                     <div
-                        class="relative w-full sm:w-1/2 md:w-1/2 lg:w-1/2 sm:max-w-[350px] border-2 m-2 border-[#ccc] hover:border-emerald-600 rounded-[14px] h-[56px] flex items-center justify-center"
+                        class="relative w-full sm:w-1/2 md:w-1/2 lg:w-1/2 sm:max-w-[350px] border-2 m-2 border-[#BED1CF] hover:border-[#BED1CF] rounded-full h-[56px] flex items-center justify-center *:hover:border-[#FFF7F1]"
                         v-for="(item, index) in currentCard.quiz"
                         :key="index"
                         @click="checkAnswer"
                     >
                         <span
-                            class="absolute left-[2%] select-none font-extrabold rounded-lg w-8 border-2 border-[#ccc]"
+                            class="absolute left-[2%] select-none font-extrabold rounded-full w-8 border-2 border-[#BED1CF]"
                             >{{ index + 1 }}
                         </span>
 
@@ -329,15 +341,15 @@ watch(
                 <div class="text-center py-4">
                     <button
                         @click="nextCard"
-                        class="bg-green-400 *:hover:animate-next-icon-trans hover:*:transition-all hover:bg-green-600 transition-all hover:text-white px-5 rounded-full font-medium text-lg"
+                        class="hover:*:transition-all border-2 bg-[#FFE4C9] border-black hover:bg-[#102C57] hover:text-[#FEFAF6] transition-all text-black px-8 py-2 rounded-full font-medium text-lg"
                     >
-                        <NextHeliumIcon class="w-16 h-[64px] px-2" />
+                        Tiếp tục
                     </button>
                 </div>
             </div>
             <div
                 class="absolute w-full right-0 h-[350px] sm:h-[300px] max-h-[300px] bottom-0 p-4 flex z-10"
-                :class="isCorrect ? 'bg-emerald-400' : 'bg-[#ff6969]'"
+                :class="isCorrect ? 'bg-green-400' : 'bg-[#ff6c6c]'"
                 v-else-if="cardAnswer"
             >
                 <div
@@ -351,12 +363,12 @@ watch(
                     </div>
                     <div class="absolute top-1/3 w-full">
                         <p
-                            class="sm:px-5 text-base sm:text-lg text-slate-700 font-medium"
+                            class="sm:px-5 text-base sm:text-lg text-black font-bold"
                         >
                             Đáp án: /{{ currentCard.value }}/
                         </p>
                         <p
-                            class="sm:px-5 text-base sm:text-lg text-slate-700 font-medium"
+                            class="sm:px-5 text-base sm:text-lg text-black font-bold"
                             v-if="currentCard.sentence"
                         >
                             Nghĩa: {{ currentCard.sentence }}
@@ -365,19 +377,23 @@ watch(
                 </div>
                 <div
                     v-if="currentCard.image"
-                    class="w-1/2 flex justify-center sm:w-[40%] overflow-hidden p-4 h-[80%] sm:h-[100%]"
+                    class="w-1/2 flex justify-center sm:w-[40%] overflow-hidden h-[80%] sm:h-[100%]"
                 >
                     <img
-                        class="object-cover rounded-lg"
+                        class="object-cover sm:p-10"
                         :src="currentCard.image"
                     />
                 </div>
+                <div
+                    v-else
+                    class="w-1/2 flex justify-center sm:w-[40%] overflow-hidden p-4 h-[80%] sm:h-[100%]"
+                ></div>
                 <div class="hidden sm:flex w-[20%] p-4 flex-col justify-center">
                     <button
-                        class="bg-[#fff5e1] px-7 rounded-3xl py-2 text-[#0C1844] font-bold"
+                        class="bg-[#fff5e1] px-7 rounded-3xl py-2 text-[#0C1844] font-bold border-2 border-[#fff5e1] hover:border-black"
                         @click="nextCard"
                     >
-                        Next
+                        Tiếp
                     </button>
                 </div>
                 <div
@@ -387,7 +403,7 @@ watch(
                         class="bg-[#fff5e1] w-full px-7 rounded-3xl py-2 text-[#0C1844] font-bold"
                         @click="nextCard"
                     >
-                        Next
+                        Tiếp
                     </button>
                 </div>
             </div>
@@ -395,17 +411,22 @@ watch(
     </div>
     <div v-else>
         <div
-            class="flex flex-col justify-center items-center min-h-screen bg-[#153448]"
+            class="flex flex-col justify-center items-center min-h-screen bg-[#FFF7F1]"
         >
             <div>
-                <img class="w-40" src="../assets/images/penguin-logo.svg" />
+                <img
+                    class="w-40 select-none"
+                    src="../assets/images/penguin-logo.svg"
+                />
             </div>
-            <p class="text-lg font-bold text-white">Hoàn thành bài học!</p>
-            <p class="text-white font-bold px-2 rounded-full bg-[#948979]">
+            <p class="text-lg font-bold text-black">Hoàn thành bài học!</p>
+            <p
+                class="text-black font-bold px-2 rounded-full bg-[#FFE4C9] border-2 border-black"
+            >
                 {{ Math.floor((percentCorrect / numQuestions) * 100) }} %
             </p>
             <p
-                class="text-white font-bold mt-3 text-lg underline transition-all hover:transition-all hover:text-[#ccc] hover:cursor-pointer"
+                class="text-black font-bold mt-3 text-lg underline transition-all hover:transition-all hover:text-green-600 hover:cursor-pointer"
                 @click="router.go(0)"
             >
                 Học lại
@@ -413,13 +434,13 @@ watch(
             <!-- Next lesson button -->
             <div
                 @click="nextLesson"
-                class="mt-16 px-5 py-2 bg-[#fff5e1] text-lg font-bold rounded-full"
+                class="mt-16 px-5 py-2 bg-[#FFE4C9] border-2 border-[#FFE4C9] transition-all hover:border-black text-lg cursor-pointer font-bold rounded-full"
             >
                 Bài tiếp theo
             </div>
             <!-- Next lesson button -->
             <router-link
-                class="text-white mt-3 text-base underline"
+                class="text-black mt-3 text-base font-medium hover:text-green-600 underline"
                 :to="{
                     name: 'CourseDetail',
                     params: { id: props.course_id },

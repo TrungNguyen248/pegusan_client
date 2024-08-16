@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <div class="bg-[#3c5b6f] h-[100vh]">
+    <div class="bg-[#FFF7F1] h-[100vh]">
         <div class="w-full">
             <div class="flex fixed z-50">
                 <img

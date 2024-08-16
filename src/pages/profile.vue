@@ -32,7 +32,7 @@ onMounted(async () => {
 
 <template>
     <div class="container mx-auto max-w-7xl mt-[72px]">
-        <p class="px-10 pt-5 text-2xl text-white font-bold">
+        <p class="px-10 pt-5 text-2xl text-black font-bold">
             Thông tin tài khoản
         </p>
         <div class="p-4 sm:p-10 flex flex-col items-center w-full">
@@ -47,10 +47,10 @@ onMounted(async () => {
                         />
                     </div>
                     <div
-                        class="border-0 sm:border-l-[1px] sm:border-[#948979]/70 px-0 sm:px-4 ml-5 pt-5 w-full sm:w-[70%]"
+                        class="border-0 sm:border-l-[1px] sm:border-[#948979]/70 px-0 sm:px-4 sm:ml-5 pt-5 w-full sm:w-[70%]"
                     >
                         <div class="mb-4">
-                            <p class="text-[#dfd0b8] font-bold">
+                            <p class="text-[#153448] font-bold">
                                 Cấp: {{ levelInfo.level }}
                             </p>
                             <div class="relative px-4">
@@ -66,34 +66,31 @@ onMounted(async () => {
                                     <p
                                         class="absolute top-0 text-black text-sm font-bold left-1/2 -translate-x-1/2"
                                     >
-                                        {{ levelInfo.point }}/{{
-                                            levelInfo.point + levelInfo.toNext
-                                        }}
+                                        {{ levelInfo.per * 100 + '%' }}
                                     </p>
                                 </div>
                             </div>
                         </div>
                         <div class="py-2">
                             <p
-                                class="flex border-b-[1px] border-[#948979]/70 justify-between text-base font-medium text-[#dfd0b8]"
+                                class="flex border-b-[1px] border-[#948979]/70 justify-between text-base font-medium text-[#153448]"
                             >
                                 Tên tài khoản:
-                                <span class="ml-5 text-white">{{
+                                <span class="ml-5 text-black">{{
                                     infoDetail.name
                                 }}</span>
                             </p>
                         </div>
                         <div class="py-2">
                             <p
-                                class="flex border-b-[1px] border-[#948979]/70 justify-between text-base font-medium text-[#dfd0b8]"
+                                class="flex border-b-[1px] border-[#948979]/70 justify-between text-base font-medium text-[#153448]"
                             >
                                 Email:
-                                <span
-                                    class="hidden sm:block relative ml-5 text-white"
+                                <span class="sm:block relative ml-5 text-black"
                                     >{{ infoDetail.email
                                     }}<span
                                         v-if="infoDetail.status == 'pending'"
-                                        class="absolute select-none left-[105%] top-0 w-20 rounded-full text-[10px] bg-red-500 text-white flex items-center justify-center font-bold"
+                                        class="hidden sm:flex absolute select-none left-[105%] top-0 w-20 rounded-full text-[10px] bg-red-500 text-white items-center justify-center font-bold"
                                         >*Chưa xác thực</span
                                     ></span
                                 >
@@ -101,30 +98,30 @@ onMounted(async () => {
                         </div>
                         <div class="py-2">
                             <p
-                                class="flex border-b-[1px] border-[#948979]/70 justify-between text-base font-medium text-[#dfd0b8]"
+                                class="flex border-b-[1px] border-[#948979]/70 justify-between text-base font-medium text-[#153448]"
                             >
                                 Điện thoại:
                                 <span
                                     v-if="infoDetail.phone"
-                                    class="ml-5 text-white"
+                                    class="ml-5 text-black"
                                     >{{ infoDetail.phone }}</span
                                 >
-                                <span v-else class="ml-5 text-white"
+                                <span v-else class="ml-5 text-black"
                                     >(Trống)</span
                                 >
                             </p>
                         </div>
                         <div class="py-2">
                             <p
-                                class="flex border-b-[1px] border-[#948979]/70 justify-between text-base font-medium text-[#dfd0b8]"
+                                class="flex border-b-[1px] border-[#948979]/70 justify-between text-base font-medium text-[#153448]"
                             >
                                 Ngày sinh:
                                 <span
                                     v-if="infoDetail.date_of_birth"
-                                    class="ml-5 text-white"
+                                    class="ml-5 text-black"
                                     >{{ infoDetail.date_of_birth }}</span
                                 >
-                                <span v-else class="ml-5 text-white"
+                                <span v-else class="ml-5 text-black"
                                     >(Trống)</span
                                 >
                             </p>
@@ -140,10 +137,10 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
-        <p class="px-10 pt-5 text-2xl text-white font-bold">
+        <p class="px-10 pt-5 text-2xl text-black font-bold">
             Khóa học đang học
         </p>
-        <div class="px-4 py-10 flex flex-col items-center w-full">
+        <div class="sm:px-4 py-10 flex flex-col items-center w-full">
             <div class="w-full max-w-7xl">
                 <div class="flex flex-wrap justify-center sm:justify-normal">
                     <div
@@ -161,7 +158,7 @@ onMounted(async () => {
                                 name: 'CourseDetail',
                                 params: { id: course.course._id },
                             }"
-                            class="relative text-gray-800 font-bold overflow-hidden object-cover rounded-t-2xl"
+                            class="relative border-2 border-b-0 border-black text-gray-800 font-bold overflow-hidden object-cover rounded-t-2xl"
                         >
                             <div class="w-full">
                                 <img
@@ -172,9 +169,9 @@ onMounted(async () => {
                         </router-link>
                         <div
                             v-if="course.course != null"
-                            class="p-4 border-2 rounded-b-2xl border-[#fff5e1] bg-[#153448]"
+                            class="p-2 border-2 rounded-b-2xl border-black bg-[#FEFAF6]"
                         >
-                            <div class="text-white font-bold">
+                            <div class="text-black font-bold">
                                 <router-link
                                     :to="{
                                         name: 'CourseDetail',
@@ -187,10 +184,10 @@ onMounted(async () => {
                                 </router-link>
                             </div>
                             <div
-                                class="absolute py-4 top-1 right-[7%] flex justify-center items-center"
+                                class="absolute py-4 top-1 right-[22px] flex justify-center items-center"
                             >
                                 <div
-                                    class="flex justify-center items-center bg-white border-[1px] border-black rounded-full"
+                                    class="flex justify-center items-center bg-white border-2 border-black rounded-full"
                                 >
                                     <div class="mr-2 pl-2">
                                         <span>
@@ -221,7 +218,7 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
-        <p class="px-10 pt-5 text-2xl text-white font-bold">
+        <p class="px-10 pt-5 text-2xl text-black font-bold">
             Thành tựu đạt được
         </p>
         <div
@@ -230,7 +227,7 @@ onMounted(async () => {
         >
             <p
                 v-if="progress.achievements.length <= 0"
-                class="text-white text-base font-medium"
+                class="text-black text-base font-medium"
             >
                 Bạn chưa có thành tựu nào cả. Hãy tiếp tục học để đạt phần
                 thưởng nhé !

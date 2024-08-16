@@ -332,7 +332,6 @@ onUnmounted(() => {
     window.removeEventListener('keyup', handleKeyUp)
 })
 </script>
-
 <template>
     <div v-if="isLoading">
         <p>Loading..........</p>
@@ -340,18 +339,18 @@ onUnmounted(() => {
     <div v-else>
         <div v-if="isShowCheckAddList">
             <div
-                class="fixed left-1/2 rounded-b-xl -translate-x-[50%] h-[14%] w-full sm:w-[580px] animate-transform-top inset-0 bg-white z-50"
+                class="fixed left-1/2 rounded-b-xl -translate-x-[50%] h-[14%] w-full sm:w-[580px] animate-transform-top inset-0 bg-white border-2 border-[#153448] z-50"
             >
-                <p class="py-2 px-4 text-lg">Lưu thay đổi</p>
+                <p class="py-2 px-4 text-lg font-medium">Lưu thay đổi</p>
                 <div class="flex justify-center items-center">
                     <button
-                        class="px-5 py-2 font-bold rounded-full border-2 text-green-600"
+                        class="px-6 py-2 font-bold rounded-full border-2 text-green-600 hover:bg-[#153448] hover:text-green-400 transition-all"
                         @click="saveVocabsToDeck()"
                     >
                         Lưu
                     </button>
                     <button
-                        class="ml-10 px-5 py-2 font-bold rounded-full border-2 text-red-500"
+                        class="ml-10 px-6 py-2 font-bold rounded-full border-2 text-red-500 hover:bg-red-200 hover:text-red-500 transition-all"
                         @click="hiddenCheckAddList()"
                     >
                         Hủy
@@ -361,16 +360,18 @@ onUnmounted(() => {
         </div>
         <div class="container mx-auto max-w-7xl mt-[72px]">
             <div class="flex">
-                <div class="lg:w-[70%] w-full px-2 sm:pl-20 flex flex-col">
-                    <div class="flex justify-between mt-10 border-b-2 w-full">
+                <div class="lg:w-[70%] w-full px-2 lg:pl-20 flex flex-col">
+                    <div
+                        class="flex justify-between mt-10 border-b-2 border-black w-full"
+                    >
                         <div
                             @click="currContent('vc')"
                             :class="
                                 currentContent === 'vc'
-                                    ? 'bg-[#3c5b6f] h-[108%] sm:h-[103%]'
-                                    : 'bg-[#153448]'
+                                    ? 'bg-[#153448] h-[108%] sm:h-[103%]'
+                                    : 'bg-[#3C5B6F]'
                             "
-                            class="border-t-2 border-l-2 border-r-2 rounded-t-lg p-1 sm:p-3 w-1/3 hover:cursor-pointer transition-colors"
+                            class="border-t-2 border-l-2 border-black border-r-2 rounded-t-lg p-1 sm:p-3 w-1/3 hover:cursor-pointer transition-colors"
                         >
                             <p
                                 class="text-center font-medium text-white text-base sm:text-lg"
@@ -381,11 +382,11 @@ onUnmounted(() => {
                         <div
                             :class="
                                 currentContent === 'gr'
-                                    ? 'bg-[#3c5b6f] h-[108%] sm:h-[103%]'
-                                    : 'bg-[#153448]'
+                                    ? 'bg-[#153448] h-[108%] sm:h-[103%]'
+                                    : 'bg-[#3C5B6F]'
                             "
                             @click="currContent('gr')"
-                            class="border-t-2 border-l-2 border-r-2 mx-2 p-1 sm:p-3 rounded-t-lg w-1/3 hover:cursor-pointer transition-colors"
+                            class="border-t-2 border-black border-l-2 border-r-2 mx-2 p-1 sm:p-3 rounded-t-lg w-1/3 hover:cursor-pointer transition-colors"
                         >
                             <p
                                 class="text-center font-medium text-white text-base sm:text-lg"
@@ -396,11 +397,11 @@ onUnmounted(() => {
                         <div
                             :class="
                                 currentContent === 'kw'
-                                    ? 'bg-[#3c5b6f] h-[108%] sm:h-[103%] '
-                                    : 'bg-[#153448]'
+                                    ? 'bg-[#153448] h-[108%] sm:h-[103%] '
+                                    : 'bg-[#3C5B6F]'
                             "
                             @click="currContent('kw')"
-                            class="border-t-2 border-l-2 border-r-2 rounded-t-lg p-1 sm:p-3 w-1/3 hover:cursor-pointer transition-colors"
+                            class="border-t-2 border-black border-l-2 border-r-2 rounded-t-lg p-1 sm:p-3 w-1/3 hover:cursor-pointer transition-colors"
                         >
                             <p
                                 class="text-center font-medium text-white text-base sm:text-lg"
@@ -411,11 +412,11 @@ onUnmounted(() => {
                     </div>
                     <div
                         v-if="currentContent === 'vc'"
-                        class="lg:p-4 lg:border-b-2 lg:border-x-2"
+                        class="lg:p-4 border-black inset-2 lg:border-x-2 bg-[#153448]"
                     >
                         <div
                             v-if="isShowCreateList"
-                            class="fixed p-4 left-1/2 rounded-b-xl -translate-x-[50%] h-[70%] w-full sm:w-[580px] animate-transform-top flex flex-col items-center inset-0 bg-white z-50"
+                            class="fixed p-4 left-1/2 rounded-b-xl -translate-x-[50%] h-[70%] w-full sm:w-[580px] animate-transform-top border-b-2 border-x-2 border-[#153448] flex flex-col items-center inset-0 bg-[#FEFAF6] z-50"
                         >
                             <p
                                 class="px-3 py-1 text-left w-full text-[#153448] font-bold"
@@ -479,7 +480,7 @@ onUnmounted(() => {
                                 >
                                     <div
                                         @click="getDeckId(deck._id)"
-                                        class="transition-all hover:transition-all rounded-lg hover:cursor-pointer hover:border-[#e8c9af] border-[#153448] border-2 hover:text-white hover:bg-[#153448]/80 px-2 py-3 text-[#e8c9af] bg-[#153448] mt-2 font-medium flex justify-between"
+                                        class="transition-all hover:transition-all rounded-lg hover:cursor-pointer hover:border-[#FFC470] border-[#153448] border-2 px-2 py-3 text-white bg-[#153448] mt-2 font-medium flex justify-between"
                                     >
                                         <p>{{ deck.deck_title }}</p>
                                     </div>
@@ -498,7 +499,7 @@ onUnmounted(() => {
                                     color="#e8c9af"
                                 />
                                 <p
-                                    class="select-none font-medium text-sm text-[#e8c9af]"
+                                    class="select-none font-medium text-sm text-black"
                                 >
                                     T.mục ôn tập
                                 </p>
@@ -514,7 +515,7 @@ onUnmounted(() => {
                                     color="#e8c9af"
                                 />
                                 <p
-                                    class="select-none font-medium text-sm text-[#e8c9af]"
+                                    class="select-none font-medium text-sm text-white"
                                 >
                                     Flashcard
                                 </p>
@@ -537,7 +538,7 @@ onUnmounted(() => {
                                     color="#e8c9af"
                                 />
                                 <p
-                                    class="select-none font-medium text-sm text-[#e8c9af]"
+                                    class="select-none font-medium text-sm text-white"
                                 >
                                     Lưu từ
                                 </p>
@@ -546,7 +547,7 @@ onUnmounted(() => {
                         <div v-if="isShowFlc" class="w-full lg:px-10">
                             <p
                                 v-if="currentCardIndex == 0"
-                                class="hidden sm:block text-white text-center font-medium"
+                                class="hidden sm:block text-black text-center font-medium"
                             >
                                 "Có thể chuyển thẻ bằng cách ấn -> hoặc <-"
                             </p>
@@ -564,7 +565,7 @@ onUnmounted(() => {
 
                                 <BaseCard class="relative">
                                     <div
-                                        class="flex flex-col items-center *:text-white"
+                                        class="flex flex-col items-center *:text-black"
                                     >
                                         <h2
                                             class="text-3xl sm:text-6xl px-3 text-center"
@@ -590,7 +591,7 @@ onUnmounted(() => {
                                     </div>
                                     <p
                                         v-if="currentCardIndex == 0"
-                                        class="sm:hidden absolute bottom-0 text-white text-medium text-sm"
+                                        class="sm:hidden absolute bottom-0 text-black text-medium text-sm"
                                     >
                                         <<< Vuốt sang trái để tiếp tục
                                     </p>
@@ -612,7 +613,7 @@ onUnmounted(() => {
                         >
                             <thead>
                                 <tr
-                                    class="*:text-white *:pl-3 *:text-lg border-2 border-[#ccc]/30 *:py-2"
+                                    class="*:text-white *:pl-3 *:text-lg *:py-2"
                                 >
                                     <th class="text-left">Từ vựng</th>
                                     <th class="text-left">Kanji</th>
@@ -621,7 +622,7 @@ onUnmounted(() => {
                             </thead>
                             <tbody>
                                 <tr
-                                    class="*:text-lg *:pl-3 *:py-2 border-2 *:text-white border-[#ccc]/30 hover:bg-[#0C1844]/70"
+                                    class="*:text-lg *:pl-3 *:py-2 border-2 *:text-white border-[#BED1CF] hover:bg-[#3C5B6F]/70"
                                     v-for="(item, idx) in vocabs"
                                     :key="idx"
                                 >
@@ -669,7 +670,7 @@ onUnmounted(() => {
                             <div
                                 v-for="(item, idx) in vocabs"
                                 :key="idx"
-                                class="border-2 bg-[#153448] rounded-lg *:text-white mb-4 px-2 py-4"
+                                class="border-2 bg-[#153448] rounded-lg *:text-black mb-4 px-2 py-4"
                             >
                                 <div class="text-center text-xl">
                                     <p>{{ item.word }}</p>
@@ -746,7 +747,7 @@ onUnmounted(() => {
                                 <span class="px-2">
                                     <ListIcon class="w-8 h-[32px]" />
                                 </span>
-                                <p class="text-base font-medium text-white">
+                                <p class="text-base font-medium text-black">
                                     Thư mục ôn tập
                                 </p>
                             </div>
@@ -756,7 +757,7 @@ onUnmounted(() => {
                             <div
                                 v-if="listDeck == null || listDeck.length == 0"
                             >
-                                <p class="text-white text-sm mt-6">
+                                <p class="text-black text-sm mt-6">
                                     Bạn chưa có thư mục nào.
                                     <span
                                         @click="showCreateList()"
@@ -769,7 +770,7 @@ onUnmounted(() => {
                             <div v-else>
                                 <div v-for="(deck, idx) in listDeck" :key="idx">
                                     <div
-                                        class="transition-all hover:transition-all rounded-lg hover:cursor-pointer hover:border-[#fff] border-[#153448] border-2 hover:text-white hover:bg-[#153448]/80 px-2 py-3 text-[#e8c9af] bg-[#153448] mt-2 font-medium flex justify-between"
+                                        class="transition-all hover:transition-all rounded-lg hover:cursor-pointer border-[#153448] border-2 hover:text-white px-2 py-3 text-[#e8c9af] bg-[#153448] mt-2 font-medium flex justify-between"
                                     >
                                         <p>{{ deck.deck_title }}</p>
                                     </div>

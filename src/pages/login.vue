@@ -1,17 +1,15 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import axios from 'axios'
 import FormInput from '../base_components/Form/FormInput.vue'
 import FormCheck from '../base_components/Form/FormCheck'
 import Button from '../base_components/Button'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
-import { toast } from 'vue3-toastify'
-import 'vue3-toastify/dist/index.css'
 
-const props = defineProps({
-    message: String,
-})
+import Notification from '../base_components/Notification/Notification.vue'
+import { useNotificationStore } from '../stores/notify'
+const notificationStore = useNotificationStore()
 
 const form = ref({
     email: '',
@@ -22,8 +20,28 @@ const user = ref({})
 const error = ref(null) // error validation ==> :valid
 const router = useRouter()
 
+async function fetchReviewFl(user) {
+    const res = await axios.get(
+        'http://localhost:5000/v1/api/flashcard/review',
+        {
+            headers: {
+                'x-api-key':
+                    'f19a5a8992310cd9dfcc8ce99fca99a2a1e5f28a4f3049f83c112565992066270310a4e5628169ad6e0ed6b113386f8a2a1be3e1c3ba0b6c61ceeb97f0ec8b61',
+                'x-client-id': user._id,
+                authorization: authStore.accessToken,
+            },
+        },
+    )
+    if (res.data.status == 200) {
+        notificationStore.addNotification({
+            title: 'Bạn có thẻ đến hạn ôn tập',
+            link: '<a href="/review">Học ngay</a>',
+            type: 'detail',
+        })
+    }
+}
+
 async function login() {
-    //axios call login api
     try {
         const res = await axios.post(
             'http://localhost:5000/v1/api/login',
@@ -42,16 +60,23 @@ async function login() {
         authStore.setTokens(res.data.metadata)
         user.value = res.data.metadata
         error.value = null
+
         router.push({ name: 'Course' })
+        notificationStore.addNotification({
+            title: 'Đăng nhập thành công!',
+            type: 'success',
+            setTime: true,
+        })
     } catch (err) {
         error.value = err.response?.data.message
-        toast(error.value, {
-            autoClose: 2000,
-            position: toast.POSITION.TOP_CENTER,
-            hideProgressBar: true,
-            toastClassName: '',
-        }) // ToastOptions
+        notificationStore.addNotification({
+            title: 'Đăng nhập thất bại!',
+            sub_title: error.value,
+            type: 'error',
+            setTime: true,
+        })
     }
+    const review = await fetchReviewFl(user.value.user)
 }
 
 onMounted(() => {})
@@ -60,6 +85,7 @@ onMounted(() => {})
 <template>
     <!-- BEGIN: Login Form -->
     <div class="flex h-screen py-5 xl:h-auto xl:py-0 xl:my-0">
+        <Notification />
         <div></div>
         <div
             class="w-full px-5 py-8 mx-auto my-auto bg-white rounded-md shadow-md xl:ml-20 dark:bg-darkmode-600 xl:bg-transparent sm:px-8 xl:p-0 xl:shadow-none sm:w-3/4 lg:w-2/4 xl:w-auto"
@@ -144,6 +170,7 @@ onMounted(() => {})
                     </router-link> -->
                 </div>
             </form>
+
             <div
                 class="mt-10 text-center text-sm intro-x xl:mt-24 text-slate-600 dark:text-slate-500 xl:text-left"
             >

@@ -103,7 +103,7 @@ onMounted(async () => {
     <div v-if="isLoading"></div>
     <div v-else>
         <div class="container mx-auto max-w-7xl py-10 mt-[72px] min-h-[100svh]">
-            <p class="text-2xl text-white font-bold px-10 py-4">
+            <p class="text-2xl text-black font-bold px-10 py-4">
                 {{ deckTitle }}
             </p>
             <div class="mt-10 flex">
@@ -114,7 +114,7 @@ onMounted(async () => {
                                 <button
                                     v-if="!isShowListWord"
                                     @click="showListWord()"
-                                    class="text-white py-2 px-3 rounded-xl hover:bg-[#153448] transition-all border-2 font-bold"
+                                    class="text-black py-2 px-3 rounded-xl hover:bg-[#153448] hover:text-white transition-all border-2 font-bold"
                                 >
                                     Danh sách từ
                                 </button>
@@ -130,7 +130,7 @@ onMounted(async () => {
                                     <table class="table-auto w-full">
                                         <thead>
                                             <tr
-                                                class="*:text-white *:pl-3 *:text-lg border-2 border-[#ccc]/30 *:py-2"
+                                                class="*:text-black *:pl-3 *:text-lg border-2 border-black *:py-2"
                                             >
                                                 <th class="text-left">Thẻ</th>
                                                 <th class="text-left">
@@ -141,7 +141,7 @@ onMounted(async () => {
                                         </thead>
                                         <tbody>
                                             <tr
-                                                class="*:text-lg *:pl-3 *:py-2 border-2 *:text-white border-[#ccc]/30 hover:bg-[#0C1844]/70"
+                                                class="transition-all *:text-lg *:pl-3 *:py-2 border-2 *:text-black border-black hover:bg-[#153448] *:hover:text-white"
                                                 v-for="(
                                                     word, idx
                                                 ) in listFlcards"
@@ -150,14 +150,16 @@ onMounted(async () => {
                                                 <td>
                                                     {{ word.vocab.word }}
                                                 </td>
-                                                <td>
+                                                <td class="font-medium">
                                                     {{
                                                         moment(
                                                             word.reviewDate,
                                                         ).format('L')
                                                     }}
                                                 </td>
-                                                <td class="flex justify-center">
+                                                <td
+                                                    class="flex justify-center font-medium"
+                                                >
                                                     <button
                                                         class="hover:text-red-400"
                                                     >
@@ -171,14 +173,14 @@ onMounted(async () => {
                             </div>
                             <div v-else>
                                 <p
-                                    class="p-3 text-center font-bold text-sm text-red-200"
+                                    class="p-2 text-center font-bold text-sm text-red-400"
                                 >
                                     Lưu ý: Phải chọn số ngày sẽ học lại để
                                     chuyển đến thẻ tiếp theo!
                                 </p>
                                 <div class="flex justify-center py-4">
                                     <div
-                                        class="px-2 text-[#ffffff] flex-wrap w-full sm:w-1/2 flex"
+                                        class="px-2 text-black flex-wrap w-full sm:w-1/2 flex"
                                     >
                                         <div
                                             v-for="(lv, idx) in level"
@@ -193,7 +195,7 @@ onMounted(async () => {
                                         >
                                             <div
                                                 :class="lv.color"
-                                                class="transition-all rounded-lg border-2 py-2 w-full text-center"
+                                                class="transition-all rounded-lg border-2 border-black py-2 w-full text-center"
                                             >
                                                 <button class="">
                                                     {{ lv[idx] }}

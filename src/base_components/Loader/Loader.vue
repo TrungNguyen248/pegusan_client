@@ -46,7 +46,7 @@
                 </li>
             </ul>
         </div>
-        <span class="text-[#fff] font-bold">Đang tải ...</span>
+        <span class="font-bold">Đang tải ...</span>
     </div>
 </template>
 
@@ -54,7 +54,7 @@
 .loader {
     --background: linear-gradient(135deg, #23c4f8, #153448);
     --shadow: rgba(11, 21, 63, 0.28);
-    --text: #ffffff;
+    --text: #000000;
     --page: rgba(255, 255, 255, 0.36);
     --page-fold: rgba(255, 255, 255, 0.52);
     --duration: 3s;

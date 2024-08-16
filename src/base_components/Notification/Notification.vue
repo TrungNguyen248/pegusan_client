@@ -1,52 +1,59 @@
 <script setup>
-import { ref, onMounted, inject } from 'vue'
-import { init, reInit } from './notification'
-import Toastify from 'toastify-js'
+import { computed } from 'vue'
+import { useNotificationStore } from '../../stores/notify'
 
-// Props
-const props = defineProps({
-    options: Object,
-    refKey: String,
-})
+const notificationStore = useNotificationStore()
 
-// Refs
-const toastifyRef = ref({
-    toastify: Toastify,
-    showToast: () => {},
-    hideToast: () => {},
-})
-
-const bindInstance = (el) => {
-    if (props.refKey) {
-        const bind = inject(`bind[${props.refKey}]`)
-        if (bind) {
-            bind(el)
-        }
-    }
+function remove(notificationId) {
+    notificationStore.removeNotification(notificationId)
 }
 
-const vNotificationDirective = {
-    mounted(el) {
-        init(el, props)
-    },
-    updated(el) {
-        reInit(el)
-    },
-}
-
-onMounted(() => {
-    if (toastifyRef.value) {
-        bindInstance(toastifyRef.value)
-    }
-})
+const value = computed(() => notificationStore.notifications)
 </script>
 
 <template>
-    <div
-        class="hidden py-5 pl-5 bg-white border rounded-lg shadow-xl pr-14 border-slate-200/60 dark:bg-darkmode-600 dark:text-slate-300 dark:border-darkmode-600"
-        v-notification-directive
-        ref="toastifyRef"
-    >
-        <slot></slot>
+    <div v-if="value.length > 0" class="fixed top-5 z-[51] right-0">
+        <div
+            v-for="notification in value"
+            :key="notification.id"
+            class="animate-text-fade"
+        >
+            <div
+                class="flex w-full max-w-sm py-5 px-6 bg-white rounded-xl border border-gray-200 shadow-sm mb-4 gap-4"
+            >
+                <div class="block">
+                    <h5 :class="notification.class" class="font-medium mb-1">
+                        {{ notification.title }}
+                    </h5>
+                    <p class="text-sm font-medium text-gray-600">
+                        {{ notification.sub_title }}
+                    </p>
+                    <div
+                        v-if="notification.link"
+                        v-html="notification.link"
+                    ></div>
+                </div>
+                <button
+                    @click="remove(notification.id)"
+                    type="button"
+                    class="inline-flex flex-shrink-0 justify-center text-gray-400 transition-all duration-150"
+                >
+                    <svg
+                        class="w-6 h-6"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M7 17L17 7M17 17L7 7"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                </button>
+            </div>
+        </div>
     </div>
 </template>

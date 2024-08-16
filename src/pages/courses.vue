@@ -13,8 +13,6 @@ const isLoading = ref(true)
 const authStore = useAuthStore()
 const user = authStore.user
 
-async function fetchCourseRegistered() {}
-
 async function registerCourse(courseId) {
     await axios.post(
         'http://localhost:5000/v1/api/course/register',
@@ -63,13 +61,13 @@ onMounted(async () => {
 <template>
     <div
         v-if="isLoading"
-        class="relative h-[100svh] flex justify-center bg-[#3C5B6F] items-center z-[100]"
+        class="relative h-[100svh] flex justify-center bg-[#BED1CF] items-center z-[100]"
     >
         <LoaderGif class="w-56 h-[104px]" />
     </div>
     <div v-else>
         <div class="container mx-auto max-w-7xl py-10 mt-[72px]">
-            <p class="text-2xl text-white font-bold px-10 py-4">
+            <p class="text-2xl text-black font-bold px-10 py-4">
                 Danh sách khóa học
             </p>
         </div>
@@ -91,7 +89,7 @@ onMounted(async () => {
                             @click="
                                 !course.registered && registerCourse(course._id)
                             "
-                            class="relative text-gray-800 font-bold overflow-hidden object-cover rounded-t-2xl"
+                            class="relative text-gray-800 font-bold border-2 border-b-0 border-black overflow-hidden object-cover rounded-t-3xl"
                         >
                             <div class="w-full">
                                 <img
@@ -101,9 +99,9 @@ onMounted(async () => {
                             </div>
                         </router-link>
                         <div
-                            class="p-4 border-2 rounded-b-2xl border-[#fff5e1] bg-[#153448]"
+                            class="p-2 border-2 rounded-b-2xl border-black bg-[#FEFAF6]"
                         >
-                            <div class="text-white font-bold">
+                            <div class="text-black font-bold">
                                 <router-link
                                     :to="{
                                         name: 'CourseDetail',
@@ -117,9 +115,9 @@ onMounted(async () => {
                                     <p class="text-lg">{{ course.name }}</p>
                                 </router-link>
                             </div>
-                            <div class="absolute py-4 top-1 right-[7%]">
+                            <div class="absolute py-4 top-1 right-[22px]">
                                 <div
-                                    class="flex justify-center items-center bg-white border-[1px] border-black rounded-full"
+                                    class="flex justify-center items-center bg-white border-2 border-black rounded-full"
                                 >
                                     <div class="mr-2 pl-2">
                                         <span>

@@ -17,6 +17,7 @@ const lessonList = ref({})
 const error = ref(null)
 const isLoading = ref(true)
 const typeLesson = ref('')
+const nameCourse = ref('')
 
 const authStore = useAuthStore()
 const user = authStore.user
@@ -24,7 +25,6 @@ const courseStore = useCourseStore()
 
 async function fetchCourseDetails() {
     typeLesson.value = ''
-    lessonList.value = {}
     error.value = null
     try {
         const data = await courseApi.getLessonListByIdCourse({
@@ -32,7 +32,6 @@ async function fetchCourseDetails() {
             userId: user._id,
             accessToken: authStore.accessToken,
         })
-
         if (data.status == 'error') {
             error.value = data.message
         } else {
@@ -41,10 +40,11 @@ async function fetchCourseDetails() {
             }, 2000)
             lessonList.value = data.metadata.listLessons
             typeLesson.value = data.metadata.type
-            console.log(data.metadata)
+            nameCourse.value = data.metadata.course.name
         }
     } catch (err) {
         error.value = err.response?.data
+        console.log(err)
     }
 }
 
@@ -56,7 +56,7 @@ onMounted(async () => {
 <template>
     <div
         v-if="isLoading"
-        class="relative h-[100svh] flex justify-center bg-[#3C5B6F] items-center z-[100]"
+        class="relative h-[100svh] flex justify-center bg-[#BED1CF] items-center z-[100]"
     >
         <LoaderGif class="w-56 h-[104px]" />
     </div>
@@ -65,9 +65,9 @@ onMounted(async () => {
         <div v-if="typeLesson == 'Hina'">
             <div class="container mx-auto max-w-7xl mt-[72px]">
                 <p
-                    class="text-lg flex w-full lg:w-auto justify-center sm:justify-start px-5 py-3 fixed text-white sm:text-2xl max-w-7xl font-bold z-40 lg:bg-transparent bg-[#153448]"
+                    class="text-lg flex w-full lg:w-auto justify-center sm:justify-start px-5 py-3 fixed text-black sm:text-2xl max-w-7xl font-bold z-40 lg:bg-transparent bg-[#FFF7F1]"
                 >
-                    Bảng chữ cái Hiragana và Katakana
+                    {{ nameCourse }}
                 </p>
             </div>
             <div class="container mx-auto max-w-7xl p-4 mt-[72px]">
@@ -93,13 +93,13 @@ onMounted(async () => {
                                                 lesson._id,
                                             )
                                     "
-                                    class="*:hover:cursor-pointer *:border-[1px] *:border-slate-400 hover:*:border-slate-300 hover:*:shadow-slate-400 *:px-12 *:py-4 *:mb-4 *:rounded-xl *:text-lg *:font-semibold hover:*:transition-all *:transition-all"
+                                    class="*:hover:cursor-pointer *:px-12 *:py-4 *:mb-4 *:rounded-2xl *:text-lg *:font-medium hover:*:transition-all *:transition-all"
                                 >
                                     <li
                                         :class="
                                             lesson.learnt
                                                 ? 'bg-green-400 '
-                                                : 'bg-[#ccc] hover:bg-[#eee]'
+                                                : 'bg-[#BED1CF] hover:bg-[#FFE4C9]'
                                         "
                                     >
                                         Bài {{ index + 1 }}:
@@ -113,23 +113,29 @@ onMounted(async () => {
                         class="hidden lg:block fixed container mx-auto max-w-7xl p-4"
                     >
                         <img
-                            class="absolute left-0 top-0 w-[350px] rounded-2xl"
+                            class="absolute left-0 top-0 w-[350px] rounded-2xl border-2 border-[#BED1CF]"
                             src="https://i.pinimg.com/originals/07/bc/91/07bc918c16eec88302e32aff39b3b0a8.jpg"
                         />
 
                         <img
-                            class="absolute right-0 top-0 w-[350px] rounded-2xl opacity-85"
+                            class="absolute right-0 top-0 w-[350px] rounded-2xl opacity-85 border-2 border-[#BED1CF]"
                             src="https://i.pinimg.com/originals/e2/a0/32/e2a0329de59d6adde61c6387e49d323e.jpg"
                         />
                     </div>
                 </div>
-                <div class="h-[1200px]"></div>
             </div>
         </div>
         <div v-if="typeLesson == 'Mina'">
-            <div class="container mx-auto max-w-7xl p-4 mt-[72px]">
-                <div class="py-4 px-4 sm:py-10 sm:px-20 flex flex-col">
-                    <div class="sm:w-1/2">
+            <div class="container mx-auto max-w-7xl mt-[72px]">
+                <p
+                    class="text-lg flex w-full lg:w-auto justify-center sm:justify-start px-5 py-3 fixed sm:relative text-black sm:text-2xl max-w-7xl font-bold z-40 lg:bg-transparent bg-[#FFF7F1]"
+                >
+                    {{ nameCourse }}
+                </p>
+            </div>
+            <div class="container mx-auto max-w-7xl p-4">
+                <div class="py-4 px-4 sm:py-8 sm:px-20 flex flex-col mt-10">
+                    <div class="sm:w-1/3 text-center">
                         <router-link
                             v-for="(ls, idx) in lessonList"
                             :key="idx"
@@ -143,7 +149,7 @@ onMounted(async () => {
                             class=""
                         >
                             <div
-                                class="py-3 px-7 transition-all hover:transition-all bg-[#ffffff] mb-4 border-x-8 border-[#153448] cursor-pointer hover:bg-[#ffd9a1]"
+                                class="py-3 transition-all *:hover:text-white hover:transition-all bg-[#FEFAF6] mb-4 border-2 rounded-full border-black cursor-pointer hover:bg-[#153448]"
                             >
                                 <p class="text-lg font-bold text-[#0C1844]">
                                     {{ ls.lesson_title }}

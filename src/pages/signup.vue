@@ -6,14 +6,17 @@ import FormCheck from '../base_components/Form/FormCheck'
 import Button from '../base_components/Button'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
-import { toast } from 'vue3-toastify'
-import 'vue3-toastify/dist/index.css'
+import { useNotificationStore } from '../stores/notify'
+import Notification from '../base_components/Notification/Notification.vue'
 
 const form = ref({
     name: '',
     email: '',
     password: '',
 })
+
+const notificationStore = useNotificationStore()
+
 const authStore = useAuthStore()
 const user = ref({})
 const error = ref(null) // error validation ==> :valid
@@ -40,14 +43,27 @@ async function signup() {
         user.value = res.data.metadata
         error.value = null
         router.push({ name: 'Course' })
+
+        notificationStore.addNotification({
+            title: 'Đăng kí thành công!',
+            type: 'success',
+            setTime: true,
+            timeout: 5000,
+        })
+        notificationStore.addNotification({
+            title: `Chào mừng bạn ${user.value.user.name} đã đăng ký!`,
+            sub_title: 'Bắt đầu con đường trinh phục tiếng Nhật thôi nào.',
+            type: 'success',
+            setTime: false,
+        })
     } catch (err) {
         error.value = err.response?.data.message
-        toast(error.value, {
-            autoClose: 2000,
-            position: toast.POSITION.TOP_CENTER,
-            hideProgressBar: true,
-            toastClassName: '',
-        }) // ToastOptions
+        notificationStore.addNotification({
+            title: 'Đăng kí thất bại!',
+            sub_title: error.value,
+            type: 'error',
+            setTime: true,
+        })
     }
 }
 </script>
@@ -55,6 +71,7 @@ async function signup() {
 <template>
     <!-- BEGIN: Sign up Form -->
     <div class="flex h-screen py-5 my-10 xl:h-auto xl:py-0 xl:my-0">
+        <Notification />
         <div
             class="w-full px-5 py-8 mx-auto my-auto bg-white rounded-md shadow-md xl:ml-20 dark:bg-darkmode-600 xl:bg-transparent sm:px-8 xl:p-0 xl:shadow-none sm:w-3/4 lg:w-2/4 xl:w-auto"
         >

@@ -7,11 +7,14 @@ import KanjivgAnimate from '../assets/js/KanjivgAnimate.min.js'
 import BackIcon from '../components/Icons/back.vue'
 import NextPageIcon from '../components/Icons/next_page.vue'
 import LoaderGif from '../base_components/Loader/Loader.vue'
+import FormInput from '../base_components/Form/FormInput.vue'
+import '../assets/js/kanji-canvas.min.js'
+import '../assets/js/ref-patterns.js'
 
 const props = defineProps({
     level: {
         type: String,
-        default: 'n5',
+        default: 'N5',
     },
     page: {
         type: String,
@@ -21,12 +24,32 @@ const props = defineProps({
 const isVisible = ref(false)
 const currentKanjiIndex = ref(0)
 const isLoading = ref(true)
+
+const isShowCanvas = ref(false)
+const kanji = ref('')
+const elCanvas = ref(null)
+const isWritten = ref(false)
+const listValueByCanvas = ref([])
+const canvasCnt = ref(
+    `<canvas 
+        id="can" 
+        class="kanji-canvas border-2 border-black bg-white" 
+        width="256" height="256" 
+        data-candidate-list="candidateList" 
+        tabindex="0">
+    </canvas>`,
+)
+
+const searchKanji = ref({})
+const isSearchKanji = ref(false)
 const listKanji = ref([])
 const svgContent = ref(null)
 const elSvg = ref(null)
 const isDisable = ref(false)
 const totalKanji = ref(0)
 const router = useRouter()
+const textOption = ref('N5')
+const listLevel = ref(['N5', 'N4', 'N3', 'N2', 'N1'])
 
 const authStore = useAuthStore()
 const user = authStore.user
@@ -53,6 +76,27 @@ async function fetchKanji(level = 'N5', page = 1) {
 }
 
 const currentKanji = computed(() => listKanji.value[currentKanjiIndex.value])
+
+async function showSearchKanji(unicode) {
+    svgContent.value = null
+    const res = await axios.post(
+        'http://localhost:5000/v1/api/kanji/svg',
+        {
+            kanji: unicode,
+        },
+        {
+            headers: {
+                'x-api-key':
+                    'f19a5a8992310cd9dfcc8ce99fca99a2a1e5f28a4f3049f83c112565992066270310a4e5628169ad6e0ed6b113386f8a2a1be3e1c3ba0b6c61ceeb97f0ec8b61',
+                'x-client-id': user._id,
+                authorization: authStore.accessToken,
+            },
+        },
+    )
+    hanlderSvgContent(res.data.metadata)
+    await nextTick()
+    addIdToSvg()
+}
 
 async function showKanjiDetail(index, unicode) {
     svgContent.value = null
@@ -85,7 +129,7 @@ const pagePagi = computed(() => {
             arr.push(i)
         }
     } else {
-        if (props.page != '') {
+        if (props.page != '' && props.page != null) {
             if (props.page / skip < totalListCount.value) {
                 const start = Math.ceil(props.page / 5)
                 if (start * skip < totalPage.value) {
@@ -118,7 +162,7 @@ function nextPageList() {
         router.push({
             name: 'Kanji',
             params: {
-                level: props.level || 'n5',
+                level: props.level || 'N5',
                 page: numPage + 1,
             },
         })
@@ -131,7 +175,7 @@ function previousPageList() {
         router.push({
             name: 'Kanji',
             params: {
-                level: props.level || 'n5',
+                level: props.level || 'N5',
                 page: numPage - 1,
             },
         })
@@ -159,6 +203,40 @@ function addIdToSvg() {
     }
 }
 
+async function searchKanjiByWord() {
+    isSearchKanji.value = true
+    const res = await axios.get(
+        `http://localhost:5000/v1/api/kanji?word=${kanji.value}`,
+        {
+            headers: {
+                'x-api-key':
+                    'f19a5a8992310cd9dfcc8ce99fca99a2a1e5f28a4f3049f83c112565992066270310a4e5628169ad6e0ed6b113386f8a2a1be3e1c3ba0b6c61ceeb97f0ec8b61',
+                'x-client-id': user._id,
+                authorization: authStore.accessToken,
+            },
+        },
+    )
+    showSearchKanji(res.data.metadata.unicode)
+    searchKanji.value = res.data.metadata
+}
+
+async function searchKanjiByBtn(word) {
+    isSearchKanji.value = true
+    const res = await axios.get(
+        `http://localhost:5000/v1/api/kanji?word=${word}`,
+        {
+            headers: {
+                'x-api-key':
+                    'f19a5a8992310cd9dfcc8ce99fca99a2a1e5f28a4f3049f83c112565992066270310a4e5628169ad6e0ed6b113386f8a2a1be3e1c3ba0b6c61ceeb97f0ec8b61',
+                'x-client-id': user._id,
+                authorization: authStore.accessToken,
+            },
+        },
+    )
+    showSearchKanji(res.data.metadata.unicode)
+    searchKanji.value = res.data.metadata
+}
+
 function waitForAnimation(stroke_num) {
     isDisable.value = true
     setTimeout(() => {
@@ -168,6 +246,33 @@ function waitForAnimation(stroke_num) {
 
 function closeModalKanji() {
     isVisible.value = false
+    isSearchKanji.value = false
+}
+
+function handWriteRecognize() {
+    KanjiCanvas.init('can')
+}
+
+const deleteLast = () => {
+    KanjiCanvas.deleteLast('can')
+}
+
+const erase = () => {
+    KanjiCanvas.erase('can')
+}
+
+const recognize = () => {
+    listValueByCanvas.value = []
+    isWritten.value = true
+    KanjiCanvas.recognize('can')
+    const e = document.querySelector('#candidateList').innerHTML
+
+    const dataStr = e.replace(/\s/g, '')
+    ;[...dataStr].forEach((c) => {
+        listValueByCanvas.value.push(c)
+    })
+
+    console.log(listValueByCanvas.value)
 }
 
 watch(
@@ -175,6 +280,7 @@ watch(
     async (newLv, oldLv) => {
         if (newLv !== oldLv) {
             await fetchKanji()
+            textOption.value = props.level == '' ? 'N5' : props.level
         }
     },
 )
@@ -190,17 +296,179 @@ watch(
 
 onMounted(async () => {
     await fetchKanji()
+    textOption.value = props.level == '' ? 'N5' : props.level
 })
 </script>
 
 <template>
     <div
         v-if="isLoading"
-        class="relative h-[100svh] flex justify-center bg-[#3C5B6F] items-center z-[100]"
+        class="relative h-[100svh] flex justify-center bg-[#BED1CF] items-center z-[100]"
     >
         <LoaderGif class="w-56 h-[104px]" />
     </div>
     <div v-else class="mt-[72px]">
+        <div
+            v-if="isSearchKanji"
+            @click.self="closeModalKanji()"
+            class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50"
+        >
+            <div
+                class="customs_scroll p-4 sm:p-10 overflow-y-auto bg-white h-[100%] sm:h-[90%] sm:w-full sm:max-w-4xl shadow-xl transform transition-all"
+            >
+                <div class="flex justify-end">
+                    <BackIcon
+                        @click="closeModalKanji()"
+                        class="w-10 h-[40px] cursor-pointer"
+                        color="#000000"
+                    />
+                </div>
+                <p class="flex items-center justify-center mb-6">
+                    <span class="text-3xl">{{ searchKanji.kanji }}</span>
+                    <span class="text-lg">{{ searchKanji.cn_vi_word }}</span>
+                </p>
+                <div class="block sm:flex">
+                    <div class="w-full sm:w-2/3">
+                        <div class="flex mb-2">
+                            <div class="w-[20%]">
+                                <span class="flex text-sm p-1 bg-gray-300"
+                                    >Kunyomi:</span
+                                >
+                            </div>
+                            <div class="w-[80%]">
+                                <span
+                                    v-for="kun in searchKanji.kunyomi"
+                                    :key="kun"
+                                    class="bg-blue-300 ml-1 px-1"
+                                >
+                                    {{ kun.replace('-', '') }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex mb-2">
+                            <div class="w-[20%]">
+                                <span class="flex text-sm p-1 bg-gray-300"
+                                    >Onyomi:</span
+                                >
+                            </div>
+                            <div class="w-[80%]">
+                                <span
+                                    v-for="on in searchKanji.onyomi"
+                                    :key="on"
+                                    class="bg-red-300 ml-1 px-1"
+                                >
+                                    {{ on }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <p>
+                                <span
+                                    class="flex text-sm p-1 w-[20%] bg-gray-300"
+                                    >Nghĩa:
+                                </span>
+                                <span class="flex px-4 text-justify">{{
+                                    searchKanji.mean
+                                }}</span>
+                            </p>
+                        </div>
+                        <div class="mb-2">
+                            <p>
+                                <span
+                                    class="flex text-sm p-1 w-[20%] bg-gray-300"
+                                    >Giải nghĩa:</span
+                                >
+                                <span class="flex px-4 text-justify">{{
+                                    searchKanji.explain
+                                }}</span>
+                            </p>
+                        </div>
+                        <div class="flex mb-2">
+                            <div class="w-[20%]">
+                                <span class="flex text-sm p-1 bg-gray-300"
+                                    >Cấp độ:
+                                </span>
+                            </div>
+                            <div class="w-[80%]">
+                                <span class="px-2">{{ searchKanji.jlpt }}</span>
+                            </div>
+                        </div>
+                        <div
+                            class="flex mb-2"
+                            v-if="searchKanji.component.length > 0"
+                        >
+                            <div class="w-[20%]">
+                                <span class="flex text-sm p-1 bg-gray-300"
+                                    >Bộ:</span
+                                >
+                            </div>
+                            <div class="w-[80%]">
+                                <span
+                                    v-for="(cp, idx) in searchKanji.component"
+                                    :key="idx"
+                                    class="ml-1 px-1"
+                                >
+                                    {{ cp }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex mb-2">
+                            <div class="w-[20%]">
+                                <span class="flex text-sm p-1 bg-gray-300"
+                                    >Số nét:
+                                </span>
+                            </div>
+                            <div class="w-[75%]">
+                                <span class="px-2">{{
+                                    searchKanji.stroke_num
+                                }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sm:w-1/3 w-full flex justify-center">
+                        <div class="flex flex-col justify-start">
+                            <div
+                                v-html="svgContent"
+                                class="border-2 rounded-lg bg-svg-background w-[230px] h-[230px]"
+                                ref="elSvg"
+                            ></div>
+                            <div class="flex justify-center">
+                                <button
+                                    class="kanjivg-button cursor-pointer my-2 px-2 py-1 text-white font-bold rounded-full"
+                                    :class="
+                                        isDisable
+                                            ? 'bg-slate-300'
+                                            : 'bg-blue-400'
+                                    "
+                                    data-kanjivg-target="#animateMe"
+                                    @click="
+                                        waitForAnimation(searchKanji.stroke_num)
+                                    "
+                                    :disabled="isDisable"
+                                >
+                                    Vẽ lại
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table-auto w-full">
+                    <div class="py-2 font-medium"><p>Ví dụ</p></div>
+                    <tbody>
+                        <tr
+                            class="*:text-base sm:*:text-lg *:border-2 *:pl-3 *:py-2"
+                            v-for="(kanji, i) in searchKanji.examples"
+                            :key="i"
+                        >
+                            <td class="w-[20%] sm:w-[15%]">{{ kanji.ja }}</td>
+                            <td class="w-[30%] sm:w-[20%]">{{ kanji.hira }}</td>
+                            <td>{{ kanji.vi }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <div
             v-if="isVisible"
             @click.self="closeModalKanji()"
@@ -367,11 +635,58 @@ onMounted(async () => {
             </div>
         </div>
         <div class="container mx-auto max-w-7xl py-10 min-h-[100svh]">
-            <p class="text-2xl text-white font-bold px-10 py-4">
+            <p class="text-2xl text-black font-bold px-10 py-4">
                 Tổng hợp Kanji
             </p>
+            <div class="relative inline-block text-left ml-10">
+                <div class="group inline-block">
+                    <button
+                        type="button"
+                        class="w-20 inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+                    >
+                        {{ textOption }}
+                        <svg
+                            class="-mr-1 ml-2 h-5 w-5"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                    </button>
+                    <div
+                        class="hidden group-hover:block origin-top-right absolute w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none"
+                    >
+                        <div
+                            class="py-1"
+                            role="menu"
+                            aria-orientation="vertical"
+                            aria-labelledby="options-menu"
+                        >
+                            <router-link
+                                v-for="op in listLevel"
+                                :key="op"
+                                :to="{
+                                    name: 'Kanji',
+                                    params: {
+                                        level: op,
+                                    },
+                                }"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
+                                role="menuitem"
+                                >{{ op }}</router-link
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="flex">
-                <div class="flex flex-col w-full sm:w-3/4">
+                <div class="flex flex-col w-full sm:w-[65%]">
                     <div class="p-10 flex flex-wrap *:text-center lg:h-[500px]">
                         <div
                             class="w-1/3 p-2 lg:w-[20%]"
@@ -380,7 +695,7 @@ onMounted(async () => {
                             @click="showKanjiDetail(i, kanji.unicode)"
                         >
                             <div
-                                class="bg-[#153448] py-1 border-2 hover:bg-[#153448]/40 transition-all hover:border-[#d18242] cursor-pointer rounded-xl"
+                                class="bg-[#153448] py-1 border-2 hover:bg-[#153448]/40 transition-all hover:border-[#d18242] cursor-pointer rounded-2xl"
                             >
                                 <p class="text-2xl text-white/95">
                                     {{ kanji.kanji }}
@@ -409,7 +724,7 @@ onMounted(async () => {
                                 :to="{
                                     name: 'Kanji',
                                     params: {
-                                        level: props.level || 'n5',
+                                        level: props.level || 'N5',
                                         page: it,
                                     },
                                 }"
@@ -437,8 +752,76 @@ onMounted(async () => {
                     </div>
                 </div>
                 <div
-                    class="hidden sm:block sm:w-1/4 border-2 border-gray-400"
-                ></div>
+                    class="hidden sm:block sm:w-[34%] border-2 border-gray-400"
+                >
+                    <p class="text-center py-2 font-bold text-xl">Tìm Kanji</p>
+                    <div class="mt-10">
+                        <div class="px-8">
+                            <form @submit.prevent="searchKanjiByWord">
+                                <div class="flex flex-col justify-center">
+                                    <FormInput
+                                        class="h-[50px]"
+                                        v-model="kanji"
+                                        required
+                                    />
+                                    <div class="flex justify-center">
+                                        <button
+                                            class="mt-5 w-32 py-2 text-lg font-medium rounded-xl text-black bg-blue-300"
+                                        >
+                                            Tim kiem
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="mt-10 px-28">
+                        <p
+                            @click="handWriteRecognize"
+                            class="text-center font-medium bg-blue-300 py-2 rounded-xl"
+                        >
+                            Ấn vào đây viết tay
+                        </p>
+                    </div>
+                    <div>
+                        <div
+                            v-html="canvasCnt"
+                            class="w-full mt-2 flex justify-center"
+                            ref="elCanvas"
+                        ></div>
+                        <div class="flex w-full px-5 my-2">
+                            <button
+                                @click="deleteLast"
+                                class="w-1/3 py-2 border-2 m-1"
+                            >
+                                Lùi
+                            </button>
+                            <button
+                                @click="erase"
+                                class="w-1/3 py-2 border-2 m-1"
+                            >
+                                Xóa hết
+                            </button>
+                            <button
+                                @click="recognize"
+                                class="w-1/3 py-2 border-2 m-1"
+                            >
+                                Tìm kiếm
+                            </button>
+                        </div>
+                        <div hidden id="candidateList"></div>
+                        <div v-if="isWritten" class="flex flex-wrap w-full">
+                            <button
+                                v-for="(kj, idx) in listValueByCanvas"
+                                :key="idx"
+                                class="w-[50px] h-[50px] bg-blue-200 mx-2 mb-2"
+                                @click="searchKanjiByBtn(kj)"
+                            >
+                                {{ kj }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

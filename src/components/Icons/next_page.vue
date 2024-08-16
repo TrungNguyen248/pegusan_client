@@ -1,14 +1,16 @@
 <template>
     <svg
-        fill="#ffffff"
+        fill="#000000"
         height="64px"
         width="64px"
         version="1.1"
         id="Layer_1"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
-        viewBox="0 0 512 512"
+        viewBox="-51.2 -51.2 614.40 614.40"
         xml:space="preserve"
+        stroke="#000000"
+        stroke-width="14.336000000000002"
     >
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
         <g

@@ -9,7 +9,7 @@ import LoaderGif from '../base_components/Loader/Loader.vue'
 const props = defineProps({
     level: {
         type: String,
-        default: 'n5',
+        default: 'N5',
     },
     page: {
         type: String,
@@ -21,8 +21,10 @@ const listGrammar = ref([])
 const isVisible = ref(false)
 const currentGrammarIndex = ref(0)
 const totalGrammar = ref(0)
-const router = useRouter()
+const textOption = ref('N5')
+const listLevel = ref(['N5', 'N4', 'N3', 'N2', 'N1'])
 
+const router = useRouter()
 const authStore = useAuthStore()
 const user = authStore.user
 
@@ -41,10 +43,10 @@ async function fetchGrammarByLevel(level = 'N5', page = 1) {
             },
         )
         totalGrammar.value = res.data.metadata.count
-        listGrammar.value = res.data.metadata.grammars
         setTimeout(() => {
             isLoading.value = false
-        }, 2000)
+        }, 1700)
+        listGrammar.value = res.data.metadata.grammars
     } catch (error) {
         console.log(error)
     }
@@ -58,7 +60,7 @@ const pagePagi = computed(() => {
             arr.push(i)
         }
     } else {
-        if (props.page != '') {
+        if (props.page != null && props.page != '') {
             if (props.page / skip < totalListCount.value) {
                 const start = Math.ceil(props.page / 5)
                 if (start * skip < totalPage.value) {
@@ -77,7 +79,6 @@ const pagePagi = computed(() => {
             }
         }
     }
-
     return arr
 })
 
@@ -87,7 +88,7 @@ function nextPageList() {
         router.push({
             name: 'Grammar',
             params: {
-                level: props.level || 'n5',
+                level: props.level || 'N5',
                 page: numPage + 1,
             },
         })
@@ -100,7 +101,7 @@ function previousPageList() {
         router.push({
             name: 'Grammar',
             params: {
-                level: props.level || 'n5',
+                level: props.level || 'N5',
                 page: numPage - 1,
             },
         })
@@ -129,6 +130,7 @@ watch(
     async (newLv, oldLv) => {
         if (newLv !== oldLv) {
             await fetchGrammarByLevel()
+            textOption.value = props.level == '' ? 'N5' : props.level
         }
     },
 )
@@ -144,13 +146,14 @@ watch(
 
 onMounted(async () => {
     await fetchGrammarByLevel()
+    textOption.value = props.level == '' ? 'N5' : props.level
 })
 </script>
 
 <template>
     <div
         v-if="isLoading"
-        class="relative h-[100svh] flex justify-center bg-[#3C5B6F] items-center z-[100]"
+        class="relative h-[100svh] flex justify-center bg-[#BED1CF] items-center z-[100]"
     >
         <LoaderGif class="w-56 h-[104px]" />
     </div>
@@ -241,9 +244,56 @@ onMounted(async () => {
             </div>
         </div>
         <div class="container mx-auto max-w-7xl py-10 mt-[72px] min-h-[100svh]">
-            <p class="text-2xl text-white font-bold px-10 py-4">
+            <p class="text-2xl text-black font-bold px-10 py-4">
                 Tổng hợp ngữ pháp
             </p>
+            <div class="relative inline-block text-left ml-10">
+                <div class="group inline-block">
+                    <button
+                        type="button"
+                        class="w-20 inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+                    >
+                        {{ textOption }}
+                        <svg
+                            class="-mr-1 ml-2 h-5 w-5"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                    </button>
+                    <div
+                        class="hidden group-hover:block origin-top-right absolute w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none"
+                    >
+                        <div
+                            class="py-1"
+                            role="menu"
+                            aria-orientation="vertical"
+                            aria-labelledby="options-menu"
+                        >
+                            <router-link
+                                v-for="op in listLevel"
+                                :key="op"
+                                :to="{
+                                    name: 'Grammar',
+                                    params: {
+                                        level: op,
+                                    },
+                                }"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
+                                role="menuitem"
+                                >{{ op }}</router-link
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="flex">
                 <div class="flex flex-col w-full sm:w-[70%]">
                     <div class="px-10 py-5">
@@ -271,7 +321,7 @@ onMounted(async () => {
                     </div>
                     <div class="flex justify-center items-center">
                         <button
-                            class="text-white py-2 px-3 rotate-180"
+                            class="text-black py-2 px-3 rotate-180"
                             @click="previousPageList()"
                         >
                             <NextPageIcon class="w-8 h-[32px]" />
@@ -283,13 +333,13 @@ onMounted(async () => {
                                 :to="{
                                     name: 'Grammar',
                                     params: {
-                                        level: props.level || 'n5',
+                                        level: props.level || 'N5',
                                         page: it,
                                     },
                                 }"
                             >
                                 <li
-                                    class="flex items-center justify-center w-7 h-[28px] rounded-full"
+                                    class="flex items-center border-2 border-black justify-center w-7 h-[28px] rounded-full"
                                     :class="
                                         props.page === '' && it == 1
                                             ? 'bg-white text-[#153448]'
@@ -303,7 +353,7 @@ onMounted(async () => {
                             </router-link>
                         </ul>
                         <button
-                            class="text-white py-2 px-3"
+                            class="text-black py-2 px-3"
                             @click="nextPageList()"
                         >
                             <NextPageIcon class="w-8 h-[32px]" />
